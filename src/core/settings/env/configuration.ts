@@ -4,6 +4,7 @@ import { ApiSettings } from "./api-settings";
 import { DatabaseSettings } from "./database-settings";
 import { MailerSettings } from "./mailer-settings";
 import * as process from 'node:process';
+import { LightsailSettings } from './lightsail-settings';
 
 export type EnvironmentVariable = { [key: string]: string };
 export type ConfigurationType = Configuration;
@@ -17,6 +18,8 @@ export class Configuration {
   mailerSettings: MailerSettings;
   @ValidateNested()
   environmentSettings: EnvironmentSettings;
+  @ValidateNested()
+  lightsailSettings: LightsailSettings;
 
   private constructor(configuration: Configuration) {
     Object.assign(this, configuration);
@@ -30,6 +33,7 @@ export class Configuration {
       databaseSettings: new DatabaseSettings(environmentVariables),
       mailerSettings: new MailerSettings(environmentVariables),
       environmentSettings: new EnvironmentSettings(environmentVariables),
+      lightsailSettings: new LightsailSettings(environmentVariables),
     });
   }
 }

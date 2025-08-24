@@ -40,7 +40,7 @@ export class BloggersController {
     private readonly blogsService: BlogsService,
   ) {}
 
-  // TODO: метод execute pattern (service)
+    // TODO: метод execute pattern (service)
 
   @Post('blogs')
   @UseGuards(JwtAuthGuard)
@@ -181,8 +181,6 @@ export class BloggersController {
     @Body() dto: BanInfoForUserDto,
     @Req() req: Request,
   ) {
-    // const updateBlog = await this.commandBus.execute(new UpdateBlogCommand(id, dto, req.headers.authorization as string));
-    // return updateBlog;
     await this.blogsService.banUserForBlog(
       req.headers.authorization as string,
       dto,
@@ -195,42 +193,46 @@ export class BloggersController {
   @UseGuards(JwtAuthGuard)
   async getBannedUsersForBlog(
     @Param('id') id: string,
-    // @Body() dto: BanInfoForUserDto,
     @Query() query: any,
     @Req() req: Request,
   ) {
-    // const updateBlog = await this.commandBus.execute(new UpdateBlogCommand(id, dto, req.headers.authorization as string));
-    // return updateBlog;
-    // await this.blogsService.banUserForBlog(req.headers.authorization as string, dto)
     const items =
       await this.blogsQueryRepository.getAllBannedUsersForCurrentBlog(
         query,
         id,
       );
-    // console.log('items: ', items);
     const users = await this.blogsService.getBannedUsers(
       req.headers.authorization as string,
       id,
     );
-    // console.log('users: ', users);
     return items;
   }
+
+
+  // ----------------------_IMAGES_------------------------- //
+
+
+  @Post('blogs/:id/images/wallpaper')
+  @UseGuards(JwtAuthGuard)
+  async addWallpaperImage(@Body() dto: BlogCreateModel, @Req() req: Request) {
+    return console.log('Blog Wallpaper done!')
+  }
+
+  @Post('blogs/:id/images/main')
+  @UseGuards(JwtAuthGuard)
+  async addBlogMainImage(@Body() dto: BlogCreateModel, @Req() req: Request) {
+    return console.log('Blog Main done!')
+  }
+
+  @Post('blogs/:blogId/posts/:postId/images/main')
+  @UseGuards(JwtAuthGuard)
+  async addPostMainImage(
+    @Body() dto: PostCreateModelWithParams,
+    @Param('id') blogId: string,
+    @Req() req: Request,
+  ) {
+    return console.log('Post Main done!')
+  }
+
+
 }
-
-
-// @Get('blogs/:id')
-// async getBlogById(@Param('id') id: string) {
-//   const blog = await this.blogsQueryRepository.blogOutput(id);
-//   return blog;
-// }
-
-// @Get('blogs/:id/posts')
-// @UseGuards(JwtAuthGuard)
-// async getAllPostsWithBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
-//   const posts = await this.postsQueryRepository.getAllPostsWithQuery(query, id);
-//   const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string);
-//   return {
-//     ...posts,
-//     items: newData,
-//   };
-// }
