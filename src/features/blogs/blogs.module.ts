@@ -15,6 +15,7 @@ import { BlogBanEntity } from './domain/blogBan.entity';
 import { BlogsService } from './application/blogs.service';
 import { BlogBanInfoEntity } from './domain/blogBanInfo.entity';
 import { BlogBanBySuperEntity } from './domain/blogBanBySuper.entity';
+import { LightsailStorageService } from '../../core/settings/lightsail-storage.service';
 
 @Module({
   imports: [
@@ -29,12 +30,14 @@ import { BlogBanBySuperEntity } from './domain/blogBanBySuper.entity';
     ...BlogsCommandHandlers,
     UsersCheckHandler,
     BlogsService,
+    LightsailStorageService
   ],
   exports: [
     BlogsQueryRepositoryTO,
     BlogsRepositoryTO,
     ...BlogsCommandHandlers,
     BlogsService,
+    LightsailStorageService
   ],
 })
 export class BlogsModule {}

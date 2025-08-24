@@ -8,8 +8,8 @@ import {
   Post,
   Put,
   Query,
-  Req,
-  UseGuards,
+  Req, UploadedFile,
+  UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { BlogCreateModel } from './models/input/create-blog.input.model';
 import { PostCreateModelWithParams } from '../../posts/api/models/input/create-post.input.model';
@@ -28,6 +28,8 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { UsersService } from '../../users/application/users.service';
 import { BlogsService } from '../application/blogs.service';
 import { BanInfoForUserDto } from './models/input/ban-user-for-blog.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { LightsailStorageService } from '../../../core/settings/lightsail-storage.service';
 
 @Controller('blogger')
 export class BloggersController {
@@ -38,6 +40,7 @@ export class BloggersController {
     private readonly postsQueryRepository: PostsQueryRepositoryTO,
     private readonly usersService: UsersService,
     private readonly blogsService: BlogsService,
+    private readonly storage: LightsailStorageService
   ) {}
 
     // TODO: метод execute pattern (service)
@@ -213,9 +216,16 @@ export class BloggersController {
 
 
   @Post('blogs/:id/images/wallpaper')
-  @UseGuards(JwtAuthGuard)
-  async addWallpaperImage(@Body() dto: BlogCreateModel, @Req() req: Request) {
-    return console.log('Blog Wallpaper done!')
+  // @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async addWallpaperImage(@UploadedFile() file: Express.Multer.File) {
+    const url = await this.storage.uploadFile(
+      `uploads/${Date.now()}-${file.originalname}`,
+      file.buffer,
+      file.mimetype
+    )
+    return {url}
+    // return console.log('Blog Wallpaper done!')
   }
 
   @Post('blogs/:id/images/main')

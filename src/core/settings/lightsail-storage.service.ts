@@ -17,6 +17,7 @@ export class LightsailStorageService {
     this.s3 = new S3Client({
       region: this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_REGION,
       endpoint: this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_ENDPOINT,
+      forcePathStyle: true,
       credentials: {
         accessKeyId: this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_ACCESS_KEY_ID,
         secretAccessKey: this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_SECRET_ACCESS_KEY
@@ -34,6 +35,9 @@ export class LightsailStorageService {
       Body: body,
       ContentType: contentType,
     });
+
+    // console.log('command: ', command);
+    console.log('url: ', this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_ENDPOINT)
 
     await this.s3.send(command)
 

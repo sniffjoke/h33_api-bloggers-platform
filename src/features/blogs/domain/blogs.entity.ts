@@ -32,6 +32,9 @@ export class BlogEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: string;
 
+  @Column({nullable: true})
+  images: string;
+
   @Column({ nullable: true })
   userId: string;
 
