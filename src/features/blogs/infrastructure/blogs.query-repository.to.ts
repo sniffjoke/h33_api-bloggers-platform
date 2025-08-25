@@ -118,7 +118,7 @@ export class BlogsQueryRepositoryTO {
     user?: UserEntity,
     banInfo?: BanBlogInfoViewModel,
   ) {
-    const { id, name, description, websiteUrl, isMembership, createdAt } = blog;
+    const { id, name, description, websiteUrl, isMembership, createdAt, images } = blog;
     const output: typeof blog = {
       id: id.toString(),
       name,
@@ -126,6 +126,7 @@ export class BlogsQueryRepositoryTO {
       websiteUrl,
       createdAt,
       isMembership,
+      images
     };
 
     if (user) {

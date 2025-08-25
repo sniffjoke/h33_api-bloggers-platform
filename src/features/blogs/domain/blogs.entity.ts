@@ -11,6 +11,7 @@ import { PostEntity } from '../../posts/domain/posts.entity';
 import { UserEntity } from '../../users/domain/user.entity';
 import { BlogBanEntity } from './blogBan.entity';
 import { BlogBanBySuperEntity } from './blogBanBySuper.entity';
+import { BlogImagesViewModel } from '../api/models/output/blog-images.view.model';
 
 @Entity('blogs')
 export class BlogEntity {
@@ -32,8 +33,8 @@ export class BlogEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: string;
 
-  @Column({nullable: true})
-  images: string;
+  @Column({ type: 'jsonb', nullable: true })
+  images: BlogImagesViewModel;
 
   @Column({ nullable: true })
   userId: string;

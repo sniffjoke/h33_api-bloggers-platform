@@ -37,7 +37,7 @@ export class LightsailStorageService {
     });
 
     // console.log('command: ', command);
-    console.log('url: ', this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_ENDPOINT)
+    // console.log('url: ', this.configService.get('lightsailSettings', {infer: true}).LIGHTSAIL_ENDPOINT)
 
     await this.s3.send(command)
 

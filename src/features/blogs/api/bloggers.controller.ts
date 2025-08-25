@@ -30,6 +30,7 @@ import { BlogsService } from '../application/blogs.service';
 import { BanInfoForUserDto } from './models/input/ban-user-for-blog.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LightsailStorageService } from '../../../core/settings/lightsail-storage.service';
+import sharp from 'sharp';
 
 @Controller('blogger')
 export class BloggersController {
@@ -219,6 +220,10 @@ export class BloggersController {
   // @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async addWallpaperImage(@UploadedFile() file: Express.Multer.File) {
+    const image = await sharp(file.buffer)
+    const metadata = await image.metadata()
+    console.log('width: ', metadata.width);
+    console.log('height: ', metadata.height);
     const url = await this.storage.uploadFile(
       `uploads/${Date.now()}-${file.originalname}`,
       file.buffer,
