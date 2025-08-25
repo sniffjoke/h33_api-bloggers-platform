@@ -11,5 +11,5 @@ export class BlogViewModel {
     isMembership: boolean;
     blogOwnerInfo?: CommentatorInfoModel;
     banInfo?: BanBlogInfoViewModel;
-    images: BlogImagesViewModel | null = null;
+    images: BlogImagesViewModel;
 }
