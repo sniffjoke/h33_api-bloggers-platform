@@ -23,7 +23,7 @@ export class BlogBanEntity {
     @JoinColumn({ name: 'userId' })
     user: UserEntity;
 
-    @ManyToOne(() => BlogEntity, (blog) => blog.blogsBans, { onDelete: 'CASCADE' })
+    @ManyToOne(() => BlogEntity, (blog) => blog.blogsBans, { cascade: true })
     @JoinColumn({ name: 'blogId' })
     blog: BlogEntity;
 

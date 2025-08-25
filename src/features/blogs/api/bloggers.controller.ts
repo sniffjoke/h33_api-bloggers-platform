@@ -219,7 +219,9 @@ export class BloggersController {
   @Post('blogs/:id/images/wallpaper')
   // @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async addWallpaperImage(@UploadedFile() file: Express.Multer.File) {
+  async addWallpaperImage(
+    @UploadedFile() file: Express.Multer.File
+  ) {
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
     console.log('width: ', metadata.width);
@@ -234,9 +236,21 @@ export class BloggersController {
   }
 
   @Post('blogs/:id/images/main')
-  @UseGuards(JwtAuthGuard)
-  async addBlogMainImage(@Body() dto: BlogCreateModel, @Req() req: Request) {
-    return console.log('Blog Main done!')
+  // @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async addBlogMainImage(
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const image = await sharp(file.buffer)
+    const metadata = await image.metadata()
+    console.log('width: ', metadata.width);
+    console.log('height: ', metadata.height);
+    const url = await this.storage.uploadFile(
+      `uploads/${Date.now()}-${file.originalname}`,
+      file.buffer,
+      file.mimetype
+    )
+    return {url}
   }
 
   @Post('blogs/:blogId/posts/:postId/images/main')

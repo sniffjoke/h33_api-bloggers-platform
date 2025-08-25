@@ -12,6 +12,7 @@ import { UserEntity } from '../../users/domain/user.entity';
 import { BlogBanEntity } from './blogBan.entity';
 import { BlogBanBySuperEntity } from './blogBanBySuper.entity';
 import { BlogImagesViewModel } from '../api/models/output/blog-images.view.model';
+import { ImagesEntity } from './images.entity';
 
 @Entity('blogs')
 export class BlogEntity {
@@ -33,8 +34,9 @@ export class BlogEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: string;
 
-  @Column({ type: 'jsonb', default: new BlogImagesViewModel() })
-  images: BlogImagesViewModel;
+  @Column({ type: 'jsonb', default: new ImagesEntity()})
+  // @Column()
+  images: ImagesEntity;
 
   @Column({ nullable: true })
   userId: string;
@@ -49,7 +51,7 @@ export class BlogEntity {
   @JoinColumn({ name: 'userId' })
   user: UserEntity;
 
-  @OneToMany(() => BlogBanEntity, (blogBan) => blogBan.blog, { cascade: true })
+  @OneToMany(() => BlogBanEntity, (blogBan) => blogBan.blog)
   blogsBans: BlogBanEntity[];
 
   @OneToOne(() => BlogBanBySuperEntity, (blogBanByUser) => blogBanByUser.blog, {
@@ -57,4 +59,8 @@ export class BlogEntity {
   })
   @JoinColumn({ name: 'blogBanByUserId' })
   banInfo: BlogBanBySuperEntity;
+
+  // @OneToOne(() => ImagesEntity, (image) => image.blog, { onDelete: 'CASCADE' })
+  // @JoinColumn({ name: 'images' })
+  // image: ImagesEntity;
 }

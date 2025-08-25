@@ -4,6 +4,7 @@ import { CommentEntity } from '../../comments/domain/comment.entity';
 import { LikeEntity } from '../../likes/domain/likes.entity';
 import { ExtendedLikesInfoEntity } from './extended-likes-info.entity';
 import {UserEntity} from "../../users/domain/user.entity";
+import { ImagesEntity } from '../../blogs/domain/images.entity';
 
 
 @Entity('posts')
@@ -30,6 +31,9 @@ export class PostEntity {
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: string;
 
+    // @Column({default: new ImagesEntity()})
+    // images: ImagesEntity;
+
     @Column({nullable: true})
     userId: string;
 
@@ -49,4 +53,8 @@ export class PostEntity {
     @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'userId' })
     user: UserEntity;
+
+    // @OneToOne(() => ImagesEntity, (image) => image.post, { onDelete: 'CASCADE' })
+    // @JoinColumn({ name: 'images' })
+    // image: ImagesEntity;
 }
