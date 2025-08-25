@@ -33,7 +33,7 @@ export class BlogEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', default: new BlogImagesViewModel() })
   images: BlogImagesViewModel;
 
   @Column({ nullable: true })
