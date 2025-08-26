@@ -16,3 +16,8 @@ export class BlogCreateModel {
     @IsUrl({}, {message: 'Введите валидный URL'})
     websiteUrl: string;
 }
+
+export enum ImageType {
+    MAIN = 'MAIN',
+    WALLPAPER = 'WALLPAPER',
+}

@@ -31,6 +31,7 @@ import { BanInfoForUserDto } from './models/input/ban-user-for-blog.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LightsailStorageService } from '../../../core/settings/lightsail-storage.service';
 import sharp from 'sharp';
+import { PhotoSizeViewModel } from './models/output/photo-size.view.model';
 
 @Controller('blogger')
 export class BloggersController {
@@ -216,41 +217,58 @@ export class BloggersController {
   // ----------------------_IMAGES_------------------------- //
 
 
-  @Post('blogs/:id/images/wallpaper')
+  @Post('blogs/:blogId/images/wallpaper')
   // @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async addWallpaperImage(
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') blogId: string,
   ) {
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
-    console.log('width: ', metadata.width);
-    console.log('height: ', metadata.height);
     const url = await this.storage.uploadFile(
-      `uploads/${Date.now()}-${file.originalname}`,
+      `blogs/wallpaper/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype
     )
-    return {url}
-    // return console.log('Blog Wallpaper done!')
+    const buffer = file.buffer
+    const imageModel: PhotoSizeViewModel = {
+      url,
+      width: metadata.width,
+      height: metadata.height,
+      fileSize: buffer.length
+    }
+    const blog = await this.blogsService.addWallpaperImage(blogId, imageModel);
+    return blog
   }
 
-  @Post('blogs/:id/images/main')
+  @Post('blogs/:blogId/images/main')
   // @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async addBlogMainImage(
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') blogId: string,
   ) {
+
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
-    console.log('width: ', metadata.width);
-    console.log('height: ', metadata.height);
+    // console.log('width: ', metadata.width);
+    // console.log('height: ', metadata.height);
     const url = await this.storage.uploadFile(
-      `uploads/${Date.now()}-${file.originalname}`,
+      `blogs/main/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype
     )
-    return {url}
+    const buffer = file.buffer
+    const imageModel: PhotoSizeViewModel = {
+      url,
+      width: metadata.width,
+      height: metadata.height,
+      fileSize: buffer.length
+    }
+    const blog = await this.blogsService.addMainImage(blogId, imageModel);
+    return blog
+    // return {url}
   }
 
   @Post('blogs/:blogId/posts/:postId/images/main')

@@ -1,43 +1,29 @@
 import {
-  Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PostEntity } from '../../posts/domain/posts.entity';
-import { UserEntity } from '../../users/domain/user.entity';
-import { BlogBanEntity } from './blogBan.entity';
-import { BlogBanBySuperEntity } from './blogBanBySuper.entity';
-import { BlogImagesViewModel } from '../api/models/output/blog-images.view.model';
 import { PhotoSizeEntity } from './photoSize.entity';
 import { BlogEntity } from './blogs.entity';
 
 @Entity('images')
-export class ImagesEntity {
+export class ImageEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({nullable: true})
-  wallpaperId: string
+  // @Column({nullable: true})
+  // postId: string;
 
-  @Column({nullable: true})
-  postId: string;
+  @OneToMany(() => PhotoSizeEntity, (photoSize) => photoSize.image, {
+    cascade: true,
+    eager: true,
+  })
+  photoMetadata: PhotoSizeEntity[];
 
-  @OneToOne(() => PhotoSizeEntity, (photoSize) => photoSize.imageWallpaper, {cascade: true})
-  @JoinColumn({name: 'wallpaperId'})
-  wallpaper: PhotoSizeEntity;
+  @OneToOne(() => BlogEntity, (blog) => blog.images)
+  blog: BlogEntity;
 
-  @OneToMany(() => PhotoSizeEntity, (photoSize) => photoSize.imageMain, {cascade: true, eager: true})
-  @JoinColumn()
-  main: PhotoSizeEntity[];
-
-  // @OneToOne(() => BlogEntity, (blog) => blog.image, {eager: true})
-  // blog: BlogEntity;
-  //
   // @OneToOne(() => PostEntity, (post) => post.image, {eager: true})
   // post: PostEntity;
-
 }

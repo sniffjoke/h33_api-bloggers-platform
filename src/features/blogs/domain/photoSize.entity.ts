@@ -3,16 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PostEntity } from '../../posts/domain/posts.entity';
-import { UserEntity } from '../../users/domain/user.entity';
-import { BlogBanEntity } from './blogBan.entity';
-import { BlogBanBySuperEntity } from './blogBanBySuper.entity';
-import { BlogImagesViewModel } from '../api/models/output/blog-images.view.model';
-import { ImagesEntity } from './images.entity';
+import { ImageEntity } from './images.entity';
+import { ImageType } from '../api/models/input/create-blog.input.model';
 
 @Entity('photoSize')
 export class PhotoSizeEntity {
@@ -22,25 +16,27 @@ export class PhotoSizeEntity {
   @Column()
   url: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   width: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   height: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   fileSize: number;
 
-  @ManyToOne(() => ImagesEntity, (image) => image.main)
-  imageMain: ImagesEntity;
+  @Column({ nullable: true })
+  imageId: string;
 
-  @OneToOne(() => ImagesEntity, (image) => image.wallpaper)
-  imageWallpaper: ImagesEntity;
+  @Column({
+    type: 'enum',
+    enum: ImageType,
+    default: ImageType.MAIN,
+  })
+  imageType: ImageType;
 
-  // @Column()
-  // imageType: string;
-  //
-  // @Column()
-  // ownType: string;
+  @ManyToOne(() => ImageEntity, (image) => image.photoMetadata, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'imageId' })
+  image: ImageEntity;
 
 }

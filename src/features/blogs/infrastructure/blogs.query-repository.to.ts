@@ -114,19 +114,31 @@ export class BlogsQueryRepositoryTO {
   }
 
   blogOutputMap(
-    blog: BlogViewModel,
+    blog: BlogEntity,
     user?: UserEntity,
     banInfo?: BanBlogInfoViewModel,
   ) {
-    const { id, name, description, websiteUrl, isMembership, createdAt, images } = blog;
-    const output: typeof blog = {
+    const {
+      id,
+      name,
+      description,
+      websiteUrl,
+      isMembership,
+      createdAt,
+      images
+    } = blog;
+    // const output: typeof blog = {
+    const output: BlogViewModel = {
       id: id.toString(),
       name,
       description,
       websiteUrl,
       createdAt,
       isMembership,
-      images
+      images: {
+        main: [],
+        wallpaper: null
+      }
     };
 
     if (user) {

@@ -4,7 +4,6 @@ import { CommentEntity } from '../../comments/domain/comment.entity';
 import { LikeEntity } from '../../likes/domain/likes.entity';
 import { ExtendedLikesInfoEntity } from './extended-likes-info.entity';
 import {UserEntity} from "../../users/domain/user.entity";
-import { ImagesEntity } from '../../blogs/domain/images.entity';
 
 
 @Entity('posts')

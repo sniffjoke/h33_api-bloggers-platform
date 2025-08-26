@@ -420,30 +420,30 @@ describe('BlogsController (e2e)', () => {
         createMockBlog(1),
         loginUser.body.accessToken,
       );
-      const post = await postsManager.createPost(createMockPost(1), blog.body.id);
+      // const post = await postsManager.createPost(createMockPost(1), blog.body.id);
 
-      // console.log('blog: ', blog.body);
+      console.log('blog: ', blog.body);
 
-      const findedBlog = await blogsManager.getBlogById(blog.body.id);
+      // const findedBlog = await blogsManager.getBlogById(blog.body.id);
 
-      const findedPost = await postsManager.getPostById(post.body.id);
+      // const findedPost = await postsManager.getPostById(post.body.id);
 
-      console.log('findedBlog: ', findedBlog.body);
+      // console.log('findedBlog: ', findedBlog.body);
 
-      console.log('findedPost: ', findedPost.body);
+      // console.log('findedPost: ', findedPost.body);
 
-      const updModel = {
-        isBanned: true,
-      }
+      // const updModel = {
+      //   isBanned: true,
+      // }
 
-      const upd = await blogsManager.banBlogBySuperUser(updModel, blog.body.id);
+      // const upd = await blogsManager.banBlogBySuperUser(updModel, blog.body.id);
 
-      const findedBlog2 = await blogsManager.getBlogById(blog.body.id);
-      console.log('findedBlog2: ', findedBlog2.body);
+      // const findedBlog2 = await blogsManager.getBlogById(blog.body.id);
+      // console.log('findedBlog2: ', findedBlog2.body);
 
-      const findedPost2 = await postsManager.getPostById(post.body.id);
+      // const findedPost2 = await postsManager.getPostById(post.body.id);
 
-      console.log('findedPost2: ', findedPost2.body);
+      // console.log('findedPost2: ', findedPost2.body);
 
 
 

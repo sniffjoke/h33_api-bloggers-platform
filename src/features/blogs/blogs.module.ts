@@ -16,10 +16,12 @@ import { BlogsService } from './application/blogs.service';
 import { BlogBanInfoEntity } from './domain/blogBanInfo.entity';
 import { BlogBanBySuperEntity } from './domain/blogBanBySuper.entity';
 import { LightsailStorageService } from '../../core/settings/lightsail-storage.service';
+import { ImageEntity } from './domain/images.entity';
+import { PhotoSizeEntity } from './domain/photoSize.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BlogEntity, PostEntity, BlogBanEntity, BlogBanInfoEntity, BlogBanBySuperEntity]),
+    TypeOrmModule.forFeature([BlogEntity, PostEntity, BlogBanEntity, BlogBanInfoEntity, BlogBanBySuperEntity, ImageEntity, PhotoSizeEntity]),
     PostsModule,
     UsersModule,
   ],
