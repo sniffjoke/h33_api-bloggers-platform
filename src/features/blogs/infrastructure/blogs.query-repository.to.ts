@@ -61,7 +61,7 @@ export class BlogsQueryRepositoryTO {
       generateQuery,
       itemsOutput,
     );
-    console.log('resultBlogs: ', resultBlogs);
+    // console.log('resultBlogs: ', resultBlogs);
     return resultBlogs;
   }
 
