@@ -27,6 +27,10 @@ export class TestingService {
               TRUNCATE TABLE "userScore" RESTART IDENTITY CASCADE;
               TRUNCATE TABLE users RESTART IDENTITY CASCADE;
               TRUNCATE TABLE "blogBan" RESTART IDENTITY CASCADE;
+              TRUNCATE TABLE "blogBanBySuper" RESTART IDENTITY CASCADE;
+              TRUNCATE TABLE "blogBanInfo" RESTART IDENTITY CASCADE;
+              TRUNCATE TABLE images RESTART IDENTITY CASCADE;
+              TRUNCATE TABLE "photoSizes" RESTART IDENTITY CASCADE;
       `
       ,
     );

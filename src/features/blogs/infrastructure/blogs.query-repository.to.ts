@@ -28,6 +28,8 @@ export class BlogsQueryRepositoryTO {
     const items = this.bRepository
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.banInfo', 'i')
+      .leftJoinAndSelect('b.images', 'images')
+      .leftJoinAndSelect('images.photoMetadata', 'meta')
       .where('LOWER(b.name) LIKE LOWER(:name)', {
         name: generateQuery.searchNameTerm.toLowerCase(),
       })
@@ -47,6 +49,7 @@ export class BlogsQueryRepositoryTO {
       items.andWhere('b.userId = :id', { id: userId });
     }
     const itemsWithQuery = await items.getMany();
+    // console.log('items: ', itemsWithQuery[0].images);
     const itemsOutput = itemsWithQuery.map((item) =>
       banInfo
         ? this.blogOutputMap(item, item.user, item.banInfo)
@@ -56,6 +59,7 @@ export class BlogsQueryRepositoryTO {
       generateQuery,
       itemsOutput,
     );
+    console.log('resultBlogs: ', resultBlogs);
     return resultBlogs;
   }
 

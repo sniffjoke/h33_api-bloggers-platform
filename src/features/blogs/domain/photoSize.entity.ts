@@ -8,7 +8,7 @@ import {
 import { ImageEntity } from './images.entity';
 import { ImageType } from '../api/models/input/create-blog.input.model';
 
-@Entity('photoSize')
+@Entity('photoSizes')
 export class PhotoSizeEntity {
   @PrimaryGeneratedColumn()
   id: string;
