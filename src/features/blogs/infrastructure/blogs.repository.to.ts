@@ -169,7 +169,7 @@ export class BlogsRepositoryTO {
 
   async addWallpaperImageToBlog(blogId: string, dto: PhotoSizeViewModel) {
     const findedBlog = await this.findBlogById(blogId);
-    console.log('findedBlog: ', findedBlog);
+    // console.log('findedBlog: ', findedBlog);
     const phSize = new PhotoSizeEntity();
     phSize.height = dto.height!;
     phSize.width = dto.width!;
@@ -188,7 +188,7 @@ export class BlogsRepositoryTO {
 
   async addMainImageToBlog(blogId: string, dto: PhotoSizeViewModel) {
     const findedBlog = await this.findBlogById(blogId);
-    console.log('findedBlog: ', findedBlog);
+    // console.log('findedBlog: ', findedBlog);
     const phSize = new PhotoSizeEntity();
     phSize.height = dto.height!;
     phSize.width = dto.width!;

@@ -220,7 +220,7 @@ export class BloggersController {
   @Post('blogs/:blogId/images/wallpaper')
   // @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async addWallpaperImage(
+  async addBlogWallpaperImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') blogId: string,
   ) {
@@ -239,7 +239,8 @@ export class BloggersController {
       fileSize: buffer.length
     }
     const blog = await this.blogsService.addWallpaperImage(blogId, imageModel);
-    return blog
+    return await this.blogsQueryRepository.getPhotoMetadata(blog.id)
+    // return blog
   }
 
   @Post('blogs/:blogId/images/main')
@@ -267,7 +268,8 @@ export class BloggersController {
       fileSize: buffer.length
     }
     const blog = await this.blogsService.addMainImage(blogId, imageModel);
-    return blog
+    return await this.blogsQueryRepository.getPhotoMetadata(blog.id)
+    // return blog
     // return {url}
   }
 

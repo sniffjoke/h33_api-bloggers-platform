@@ -8,6 +8,8 @@ import { UserEntity } from '../../users/domain/user.entity';
 import { BanUserForBlogViewModel } from '../api/models/output/ban-user-for-blog.view.dto';
 import { BlogBanInfoEntity } from '../domain/blogBanInfo.entity';
 import { BanBlogInfoViewModel } from '../api/models/output/ban-blog-info.view.model';
+import { PhotoSizeEntity } from '../domain/photoSize.entity';
+import { ImageType } from '../api/models/input/create-blog.input.model';
 
 @Injectable()
 export class BlogsQueryRepositoryTO {
@@ -236,4 +238,38 @@ export class BlogsQueryRepositoryTO {
 
     return output;
   }
+
+  // ---------------------_IMAGES_------------------------ //
+
+  async getPhotoMetadata(blogId: string) {
+    const blog = await this.bRepository.findOne({
+      where: {id: blogId},
+      relations: ['images', 'images.photoMetadata'],
+    })
+    // console.log('blog: ', blog);
+    let mainArr: Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image">[] = [];
+    let wallpaper: Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image"> | null = null;
+    blog?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
+      if (photo.imageType === ImageType.MAIN) {
+        mainArr.push(this.photoSizeOutput(photo));
+      } else {
+        wallpaper = this.photoSizeOutput(photo);
+      }
+    })
+    return {
+      main: mainArr,
+      wallpaper
+    };
+  }
+
+  photoSizeOutput(photo: PhotoSizeEntity): Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image"> {
+    return {
+      url: photo.url,
+      height: photo.height,
+      width: photo.width,
+      fileSize: photo.fileSize
+    }
+  }
+  
+  
 }
