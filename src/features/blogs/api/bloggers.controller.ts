@@ -233,8 +233,8 @@ export class BloggersController {
       throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
     }
     const image = await sharp(file.buffer)
-    console.log('file.mimetype: ', file.mimetype);
-    console.log('file.originalName: ', file.originalname);
+    // console.log('file.mimetype: ', file.mimetype);
+    // console.log('file.originalName: ', file.originalname);
     const metadata = await image.metadata()
     const url = await this.storage.uploadFile(
       `blogs/wallpaper/${Date.now()}-${file.originalname}`,
@@ -268,8 +268,8 @@ export class BloggersController {
       throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
     }
     const image = await sharp(file.buffer)
-    console.log('file.mimetype: ', file.mimetype);
-    console.log('file.originalName: ', file.originalname);
+    // console.log('file.mimetype: ', file.mimetype);
+    // console.log('file.originalName: ', file.originalname);
     const metadata = await image.metadata()
     // console.log('width: ', metadata.width);
     // console.log('height: ', metadata.height);

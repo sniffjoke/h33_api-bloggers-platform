@@ -170,19 +170,29 @@ export class BlogsRepositoryTO {
   async addWallpaperImageToBlog(blogId: string, dto: PhotoSizeViewModel) {
     const findedBlog = await this.findBlogById(blogId);
     // console.log('findedBlog: ', findedBlog);
-    const phSize = new PhotoSizeEntity();
-    phSize.height = dto.height!;
-    phSize.width = dto.width!;
-    phSize.fileSize = dto.fileSize!;
-    phSize.url = dto.url;
-    phSize.imageId = findedBlog.images.id;
-    phSize.imageType = ImageType.WALLPAPER;
-    await this.phRepository.save(phSize);
-    // const blog = await this.bRepository
-    //   .createQueryBuilder('b')
-    //   .leftJoinAndSelect('b.images', 'i')
-    //   .leftJoinAndSelect('i.main', 'm')
-    //   .getMany();
+    const isWallpaperExist = await this.phRepository.findOne({
+      where: {
+        imageId: findedBlog.images.id,
+        imageType: ImageType.WALLPAPER,
+      },
+    });
+    if (!isWallpaperExist) {
+      const phSize = new PhotoSizeEntity();
+      phSize.height = dto.height!;
+      phSize.width = dto.width!;
+      phSize.fileSize = dto.fileSize!;
+      phSize.url = dto.url;
+      phSize.imageId = findedBlog.images.id;
+      phSize.imageType = ImageType.WALLPAPER;
+      await this.phRepository.save(phSize);
+    } else {
+      isWallpaperExist.height = dto.height!;
+      isWallpaperExist.width = dto.width!;
+      isWallpaperExist.fileSize = dto.fileSize!;
+      isWallpaperExist.url = dto.url;
+      await this.phRepository.save(isWallpaperExist);
+    }
+
     return findedBlog;
   }
 
