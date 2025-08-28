@@ -233,15 +233,24 @@ export class BloggersController {
       throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
     }
     const image = await sharp(file.buffer)
-    // console.log('file.mimetype: ', file.mimetype);
-    // console.log('file.originalName: ', file.originalname);
     const metadata = await image.metadata()
+    if (metadata.height !== 312 || metadata.width !== 1028) {
+      throw new BadRequestException('Width|and|height must be as 1028x312')
+    }
     const url = await this.storage.uploadFile(
       `blogs/wallpaper/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype
     )
     const buffer = file.buffer
+    const fileSizeKb = Math.round(buffer.length / 1024);
+
+    if (fileSizeKb > 100) {
+      throw new BadRequestException(
+        `File is too much: ${fileSizeKb} Kb. Max 100 Kb.`,
+      );
+    }
+
     const imageModel: PhotoSizeViewModel = {
       url,
       width: metadata.width,
@@ -250,7 +259,6 @@ export class BloggersController {
     }
     const blog = await this.blogsService.addWallpaperImage(blogId, imageModel);
     return await this.blogsQueryRepository.getPhotoMetadata(blog.id)
-    // return blog
   }
 
   @Post('blogs/:blogId/images/main')
@@ -269,12 +277,22 @@ export class BloggersController {
     }
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
+    if (metadata.height !== 156 || metadata.width !== 156) {
+      throw new BadRequestException('Width|and|height must be as 156x156')
+    }
     const url = await this.storage.uploadFile(
       `blogs/main/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype
     )
     const buffer = file.buffer
+    const fileSizeKb = Math.round(buffer.length / 1024);
+
+    if (fileSizeKb > 100) {
+      throw new BadRequestException(
+        `File is too much: ${fileSizeKb} Kb. Max 100 Kb.`,
+      );
+    }
     const imageModel: PhotoSizeViewModel = {
       url,
       width: metadata.width,
@@ -287,8 +305,6 @@ export class BloggersController {
       main: output.main,
       wallpaper: null
     }
-    // return blog
-    // return {url}
   }
 
   @Post('blogs/:blogId/posts/:postId/images/main')
