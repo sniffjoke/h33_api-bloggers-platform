@@ -303,7 +303,7 @@ export class BloggersController {
     const output = await this.blogsQueryRepository.getPhotoMetadata(blog.id)
     return {
       main: output.main,
-      wallpaper: null
+      wallpaper: output.main
     }
   }
 
