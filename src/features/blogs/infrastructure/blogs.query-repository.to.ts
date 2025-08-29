@@ -153,7 +153,6 @@ export class BlogsQueryRepositoryTO {
         wallpaper = this.photoSizeOutput(photo);
       }
     });
-    console.log('photoMetadata: ', blog.images.photoMetadata);
     // return {
     //   main: mainArr,
     //   wallpaper

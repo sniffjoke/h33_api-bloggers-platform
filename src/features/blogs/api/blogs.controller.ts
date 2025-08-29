@@ -26,6 +26,7 @@ export class BlogsController {
   @Get('blogs/:id')
   async getBlogById(@Param('id') id: string) {
     const blog = await this.blogsQueryRepository.blogOutput(id);
+    console.log('photoMetadata: ', blog);
     return blog;
   }
 
