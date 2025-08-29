@@ -26,7 +26,12 @@ export class BlogsQueryRepositoryTO {
     userId?: string,
     banInfo?: boolean,
   ) {
-    const generateQuery = await this.generateQuery(query, getUsers, userId, banInfo);
+    const generateQuery = await this.generateQuery(
+      query,
+      getUsers,
+      userId,
+      banInfo,
+    );
     const items = this.bRepository
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.banInfo', 'i')
@@ -131,8 +136,28 @@ export class BlogsQueryRepositoryTO {
       websiteUrl,
       isMembership,
       createdAt,
-      images
+      images,
     } = blog;
+    let mainArr: Omit<
+      PhotoSizeEntity,
+      'id' | 'imageType' | 'imageId' | 'image'
+    >[] = [];
+    let wallpaper: Omit<
+      PhotoSizeEntity,
+      'id' | 'imageType' | 'imageId' | 'image'
+    > | null = null;
+    blog?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
+      if (photo.imageType === ImageType.MAIN) {
+        mainArr.push(this.photoSizeOutput(photo));
+      } else {
+        wallpaper = this.photoSizeOutput(photo);
+      }
+    });
+    console.log('photoMetadata: ', blog.images.photoMetadata);
+    // return {
+    //   main: mainArr,
+    //   wallpaper
+    // };
     // const output: typeof blog = {
     const output: BlogViewModel = {
       id: id.toString(),
@@ -142,9 +167,11 @@ export class BlogsQueryRepositoryTO {
       createdAt,
       isMembership,
       images: {
-        main: [],
-        wallpaper: null
-      }
+        // main: [],
+        // wallpaper: null
+        main: mainArr,
+        wallpaper,
+      },
     };
 
     if (user) {
@@ -243,33 +270,39 @@ export class BlogsQueryRepositoryTO {
 
   async getPhotoMetadata(blogId: string) {
     const blog = await this.bRepository.findOne({
-      where: {id: blogId},
+      where: { id: blogId },
       relations: ['images', 'images.photoMetadata'],
-    })
+    });
     // console.log('blog: ', blog);
-    let mainArr: Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image">[] = [];
-    let wallpaper: Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image"> | null = null;
+    let mainArr: Omit<
+      PhotoSizeEntity,
+      'id' | 'imageType' | 'imageId' | 'image'
+    >[] = [];
+    let wallpaper: Omit<
+      PhotoSizeEntity,
+      'id' | 'imageType' | 'imageId' | 'image'
+    > | null = null;
     blog?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
       if (photo.imageType === ImageType.MAIN) {
         mainArr.push(this.photoSizeOutput(photo));
       } else {
         wallpaper = this.photoSizeOutput(photo);
       }
-    })
+    });
     return {
       main: mainArr,
-      wallpaper
+      wallpaper,
     };
   }
 
-  photoSizeOutput(photo: PhotoSizeEntity): Omit<PhotoSizeEntity, "id" | "imageType" | "imageId" | "image"> {
+  photoSizeOutput(
+    photo: PhotoSizeEntity,
+  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image'> {
     return {
       url: photo.url,
       height: photo.height,
       width: photo.width,
-      fileSize: photo.fileSize
-    }
+      fileSize: photo.fileSize,
+    };
   }
-  
-  
 }
