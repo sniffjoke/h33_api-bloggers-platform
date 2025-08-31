@@ -272,7 +272,7 @@ export class BloggersController {
   @UseInterceptors(FileInterceptor('file'))
   async addBlogMainImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('id') blogId: string,
+    @Param('blogId') blogId: string,
     @Req() req: Request
   ) {
     if (!file) {
