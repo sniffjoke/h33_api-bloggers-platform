@@ -167,12 +167,10 @@ export class BlogsRepositoryTO {
 
   // ----------------------_IMAGES_------------------------- //
 
-  async addWallpaperImageToBlog(blogId: string, dto: PhotoSizeViewModel) {
-    const findedBlog = await this.findBlogById(blogId);
-    // console.log('findedBlog: ', findedBlog);
+  async addWallpaperImageToBlog(blog: BlogEntity, dto: PhotoSizeViewModel) {
     const isWallpaperExist = await this.phRepository.findOne({
       where: {
-        imageId: findedBlog.images.id,
+        imageId: blog.images.id,
         imageType: ImageType.WALLPAPER,
       },
     });
@@ -182,8 +180,9 @@ export class BlogsRepositoryTO {
       phSize.width = dto.width!;
       phSize.fileSize = dto.fileSize!;
       phSize.url = dto.url;
-      phSize.imageId = findedBlog.images.id;
+      phSize.imageId = blog.images.id;
       phSize.imageType = ImageType.WALLPAPER;
+      blog.images.photoMetadata.push(phSize);
       await this.phRepository.save(phSize);
     } else {
       isWallpaperExist.height = dto.height!;
@@ -192,36 +191,20 @@ export class BlogsRepositoryTO {
       isWallpaperExist.url = dto.url;
       await this.phRepository.save(isWallpaperExist);
     }
-
-    return findedBlog;
+    const updatedBlog = await this.findBlogById(blog.id);
+    return updatedBlog;
   }
 
-  async addMainImageToBlog(blogId: string, dto: PhotoSizeViewModel) {
-    const findedBlog = await this.findBlogById(blogId);
-    // console.log('findedBlog: ', findedBlog);
+  async addMainImageToBlog(blog: BlogEntity, dto: PhotoSizeViewModel) {
     const phSize = new PhotoSizeEntity();
     phSize.height = dto.height!;
     phSize.width = dto.width!;
     phSize.fileSize = dto.fileSize!;
     phSize.url = dto.url;
-    phSize.imageId = findedBlog.images.id;
+    phSize.imageId = blog.images.id;
+    console.log(phSize);
     await this.phRepository.save(phSize);
-    // const blog = await this.bRepository
-    //   .createQueryBuilder('b')
-    //   .leftJoinAndSelect('b.images', 'i')
-    //   .leftJoinAndSelect('i.main', 'm')
-    //   .getMany();
-    // console.log('phSize: ', phSize);
-    // console.log('image: ', findedBlog.images.id)
-    // console.log('data: ', dto);
-    // console.log('blog: ', findedBlog.images.main[0]);
-    // const findedBlog = await this.findBlogById(id);
-    // if (findedBlog) {
-    //   findedBlog.name = dto.name;
-    //   findedBlog.description = dto.description;
-    //   findedBlog.websiteUrl = dto.websiteUrl;
-    //   await this.bRepository.manager.save(findedBlog);
-    // }
-    return findedBlog;
+    const updatedBlog = await this.findBlogById(blog.id);
+    return updatedBlog;
   }
 }

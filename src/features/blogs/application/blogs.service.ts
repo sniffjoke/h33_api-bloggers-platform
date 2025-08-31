@@ -4,12 +4,14 @@ import { BanInfoForUserDto } from '../api/models/input/ban-user-for-blog.dto';
 import { UsersService } from '../../users/application/users.service';
 import { BanBlogBySuperDto } from '../api/models/input/ban-blog.input.dto';
 import { PhotoSizeViewModel } from '../api/models/output/photo-size.view.model';
+import { UsersCheckHandler } from '../../users/domain/users.check-handler';
 
 @Injectable()
 export class BlogsService {
   constructor(
     private readonly blogsRepository: BlogsRepositoryTO,
     private readonly usersService: UsersService,
+    private readonly usersCheckHandler: UsersCheckHandler
   ) {}
 
   async banUserForBlog(
@@ -45,11 +47,13 @@ export class BlogsService {
     return await this.blogsRepository.banBlogBySuperUser(blogId, dto);
   }
 
-  async addWallpaperImage(blogId: string, dto: PhotoSizeViewModel) {
-    return await this.blogsRepository.addWallpaperImageToBlog(blogId, dto);
+  async addWallpaperImage(blogId: string, dto: PhotoSizeViewModel, bearerHeader: string) {
+    const findedBlog = await this.blogsRepository.findBlogById(blogId);
+    return await this.blogsRepository.addWallpaperImageToBlog(findedBlog, dto);
   }
 
-  async addMainImage(blogId: string, dto: PhotoSizeViewModel) {
-    return await this.blogsRepository.addMainImageToBlog(blogId, dto);
+  async addMainImage(blogId: string, dto: PhotoSizeViewModel, bearerHeader: string) {
+    const findedBlog = await this.blogsRepository.findBlogById(blogId);
+    return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
   }
 }

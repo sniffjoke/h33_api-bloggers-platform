@@ -33,6 +33,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { LightsailStorageService } from '../../../core/settings/lightsail-storage.service';
 import sharp from 'sharp';
 import { PhotoSizeViewModel } from './models/output/photo-size.view.model';
+import { UsersCheckHandler } from '../../users/domain/users.check-handler';
 
 @Controller('blogger')
 export class BloggersController {
@@ -43,7 +44,7 @@ export class BloggersController {
     private readonly postsQueryRepository: PostsQueryRepositoryTO,
     private readonly usersService: UsersService,
     private readonly blogsService: BlogsService,
-    private readonly storage: LightsailStorageService
+    private readonly storage: LightsailStorageService,
   ) {}
 
     // TODO: метод execute pattern (service)
@@ -219,11 +220,12 @@ export class BloggersController {
 
 
   @Post('blogs/:blogId/images/wallpaper')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async addBlogWallpaperImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') blogId: string,
+    @Req() req: Request
   ) {
     if (!file) {
       throw new BadRequestException('Файл обязателен');
@@ -257,7 +259,11 @@ export class BloggersController {
       height: metadata.height,
       fileSize: buffer.length
     }
-    const blog = await this.blogsService.addWallpaperImage(blogId, imageModel);
+    const blog = await this.blogsService.addWallpaperImage(
+      blogId,
+      imageModel,
+      req.headers.authorization as string
+      );
     return await this.blogsQueryRepository.getPhotoMetadata(blog.id)
   }
 
@@ -267,6 +273,7 @@ export class BloggersController {
   async addBlogMainImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') blogId: string,
+    @Req() req: Request
   ) {
     if (!file) {
       throw new BadRequestException('Файл обязателен');
@@ -299,13 +306,24 @@ export class BloggersController {
       height: metadata.height,
       fileSize: buffer.length
     }
-    const blog = await this.blogsService.addMainImage(blogId, imageModel);
+    const blog = await this.blogsService.addMainImage(
+      blogId,
+      imageModel,
+      req.headers.authorization as string,
+    );
+
     const output = await this.blogsQueryRepository.getPhotoMetadata(blog.id)
     return {
       main: output.main,
       wallpaper: output.wallpaper
     }
   }
+
+
+
+
+
+
 
   @Post('blogs/:blogId/posts/:postId/images/main')
   @UseGuards(JwtAuthGuard)

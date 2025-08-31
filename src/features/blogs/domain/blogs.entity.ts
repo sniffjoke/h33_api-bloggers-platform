@@ -33,15 +33,11 @@ export class BlogEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: string;
 
-  // @Column({ type: 'jsonb', default: new ImagesEntity()})
   @Column({nullable: true})
   imagesId: string;
 
   @Column({ nullable: true })
   userId: string;
-
-  // @Column({nullable: true})
-  // blogBanByUserId: string;
 
   @OneToMany(() => PostEntity, (post) => post.blog, { cascade: true })
   posts: PostEntity[];
