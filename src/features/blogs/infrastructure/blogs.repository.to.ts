@@ -184,14 +184,12 @@ export class BlogsRepositoryTO {
       phSize.imageType = ImageType.WALLPAPER;
       blog.images.photoMetadata.push(phSize);
       await this.phRepository.save(phSize);
-      console.log('phSize: ', phSize);
     } else {
       isWallpaperExist.height = dto.height!;
       isWallpaperExist.width = dto.width!;
       isWallpaperExist.fileSize = dto.fileSize!;
       isWallpaperExist.url = dto.url;
       await this.phRepository.save(isWallpaperExist);
-      console.log('phSize: ', isWallpaperExist);
     }
     const updatedBlog = await this.findBlogById(blog.id);
     return updatedBlog;
@@ -204,7 +202,6 @@ export class BlogsRepositoryTO {
     phSize.fileSize = dto.fileSize!;
     phSize.url = dto.url;
     phSize.imageId = blog.images.id;
-    console.log('phSize: ', phSize);
     await this.phRepository.save(phSize);
     const updatedBlog = await this.findBlogById(blog.id);
     return updatedBlog;

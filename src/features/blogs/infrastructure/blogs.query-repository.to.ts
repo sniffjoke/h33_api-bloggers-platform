@@ -112,7 +112,11 @@ export class BlogsQueryRepositoryTO {
   async blogOutput(id: string, user?: UserEntity) {
     const findedBlog = await this.bRepository.findOne({
       where: { id },
-      relations: ['banInfo', 'images', 'images.photoMetadata'],
+      relations: [
+        'banInfo',
+        // 'images',
+        // 'images.photoMetadata'
+      ],
     });
     if (!findedBlog) {
       throw new NotFoundException(`Blog with id ${id} not found`);
