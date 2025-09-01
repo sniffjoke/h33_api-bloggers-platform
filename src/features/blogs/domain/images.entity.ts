@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   OneToMany,
   OneToOne,
@@ -6,14 +7,15 @@ import {
 } from 'typeorm';
 import { PhotoSizeEntity } from './photoSize.entity';
 import { BlogEntity } from './blogs.entity';
+import { PostEntity } from '../../posts/domain/posts.entity';
 
 @Entity('images')
 export class ImageEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  // @Column({nullable: true})
-  // postId: string;
+  @Column({nullable: true})
+  postId: string;
 
   @OneToMany(() => PhotoSizeEntity, (photoSize) => photoSize.image, {
     cascade: true,
@@ -24,6 +26,6 @@ export class ImageEntity {
   @OneToOne(() => BlogEntity, (blog) => blog.images)
   blog: BlogEntity;
 
-  // @OneToOne(() => PostEntity, (post) => post.image, {eager: true})
-  // post: PostEntity;
+  @OneToOne(() => PostEntity, (post) => post.images)
+  post: PostEntity;
 }

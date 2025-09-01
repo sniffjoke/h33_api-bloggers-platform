@@ -5,6 +5,8 @@ import {PostViewModel} from '../api/models/output/post.view.model';
 import {PaginationBaseModel} from '../../../core/base/pagination.base.model';
 import {PostEntity} from '../domain/posts.entity';
 import {BlogEntity} from '../../blogs/domain/blogs.entity';
+import { PhotoSizeEntity } from '../../blogs/domain/photoSize.entity';
+import { ImageType } from '../../blogs/api/models/input/create-blog.input.model';
 
 
 @Injectable()
@@ -166,6 +168,46 @@ export class PostsQueryRepositoryTO {
                 dislikesCount: extendedLikesInfo.dislikesCount
             },
             createdAt,
+        };
+    }
+
+
+    // ---------------------_IMAGES_------------------------ //
+
+    async getPhotoMetadata(postId: string) {
+        const post = await this.pRepository.findOne({
+            where: { id: postId },
+            relations: ['images', 'images.photoMetadata'],
+        });
+        let mainArr: Omit<
+          PhotoSizeEntity,
+          'id' | 'imageType' | 'imageId' | 'image'
+        >[] = [];
+        let wallpaper: Omit<
+          PhotoSizeEntity,
+          'id' | 'imageType' | 'imageId' | 'image'
+        > | null = null;
+        post?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
+            if (photo.imageType === ImageType.MAIN) {
+                mainArr.push(this.photoSizeOutput(photo));
+            } else {
+                wallpaper = this.photoSizeOutput(photo);
+            }
+        });
+        return {
+            main: mainArr,
+            wallpaper,
+        };
+    }
+
+    photoSizeOutput(
+      photo: PhotoSizeEntity,
+    ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image'> {
+        return {
+            url: photo.url,
+            height: photo.height,
+            width: photo.width,
+            fileSize: photo.fileSize,
         };
     }
 

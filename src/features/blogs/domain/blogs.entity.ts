@@ -55,7 +55,6 @@ export class BlogEntity {
   @JoinColumn({ name: 'blogBanByUserId' })
   banInfo: BlogBanBySuperEntity;
 
-  // @OneToOne(() => ImageEntity, (image) => image.blog, { onDelete: 'CASCADE' })
   @OneToOne(() => ImageEntity, (image) => image.blog, { cascade: true, eager: true })
   @JoinColumn({ name: 'imagesId' })
   images: ImageEntity;

@@ -87,4 +87,5 @@ export class BlogsService {
       return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
     }
   }
+
 }

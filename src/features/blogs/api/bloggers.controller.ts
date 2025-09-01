@@ -327,11 +327,53 @@ export class BloggersController {
   @Post('blogs/:blogId/posts/:postId/images/main')
   @UseGuards(JwtAuthGuard)
   async addPostMainImage(
-    @Body() dto: PostCreateModelWithParams,
-    @Param('id') blogId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Param() idParams: any,
     @Req() req: Request,
   ) {
-    return console.log('Post Main done!')
+    if (!file) {
+      throw new BadRequestException('Файл обязателен');
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/tiff', 'image/avif'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
+    }
+    const image = await sharp(file.buffer)
+    const metadata = await image.metadata()
+    if (metadata.height !== 156 || metadata.width !== 156) {
+      throw new BadRequestException('Width|and|height must be as 156x156')
+    }
+    const url = await this.storage.uploadFile(
+      `blogs/main/${Date.now()}-${file.originalname}`,
+      file.buffer,
+      file.mimetype
+    )
+    const buffer = file.buffer
+    const fileSizeKb = Math.round(buffer.length / 1024);
+
+    if (fileSizeKb > 100) {
+      throw new BadRequestException(
+        `File is too much: ${fileSizeKb} Kb. Max 100 Kb.`,
+      );
+    }
+    const imageModel: PhotoSizeViewModel = {
+      url,
+      width: metadata.width,
+      height: metadata.height,
+      fileSize: buffer.length
+    }
+    const post = await this.postsService.addMainImageForPost(
+      idParams.blogId,
+      idParams.postId,
+      imageModel,
+      req.headers.authorization as string,
+    );
+
+    const output = await this.postsQueryRepository.getPhotoMetadata(post!.id)
+    return {
+      main: output.main,
+      wallpaper: output.wallpaper
+    }
   }
 
 

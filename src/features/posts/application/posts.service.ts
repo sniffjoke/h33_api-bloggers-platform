@@ -6,14 +6,21 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { PostsRepositoryTO } from '../infrastructure/posts.repository.to';
 import { UsersRepositoryTO } from '../../users/infrastructure/users.repository.to';
+import { PhotoSizeViewModel } from '../../blogs/api/models/output/photo-size.view.model';
+import { BlogsRepositoryTO } from '../../blogs/infrastructure/blogs.repository.to';
+import { UsersCheckHandler } from '../../users/domain/users.check-handler';
+import { UsersService } from '../../users/application/users.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postsRepository: PostsRepositoryTO,
+    private readonly blogsRepository: BlogsRepositoryTO,
     private readonly tokensService: TokensService,
     private readonly usersRepository: UsersRepositoryTO,
     @InjectDataSource() private readonly dataSource: DataSource,
+    private readonly usersCheckHandler: UsersCheckHandler,
+    private readonly usersService: UsersService
   ) {
   }
 
@@ -98,6 +105,28 @@ export class PostsService {
         newestLikes: newLikes,
       },
     };
+  }
+
+  async addMainImageForPost(
+    blogId: string,
+    postId: string,
+    dto: PhotoSizeViewModel,
+    bearerHeader: string,
+  ) {
+    const findedBlog = await this.blogsRepository.findBlogById(blogId);
+    const findedPost = await this.postsRepository.findPostById(postId)
+    const user = await this.usersService.getUserByAuthToken(bearerHeader);
+    if (
+      this.usersCheckHandler.checkIsOwner(
+        // Number(findedBlog.userId),
+        // Number(user.id),
+        // ) && this.usersCheckHandler.checkIsOwner(
+        Number(findedPost.userId),
+        Number(user.id),
+      )
+    ) {
+      return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
+    }
   }
 
 }
