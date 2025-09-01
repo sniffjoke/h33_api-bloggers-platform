@@ -24,8 +24,8 @@ export class BlogsRepositoryTO {
     @InjectRepository(BlogBanEntity)
     private readonly banRepository: Repository<BlogBanEntity>,
     @InjectDataSource() public readonly dataSource: DataSource,
-    @InjectRepository(ImageEntity)
-    private readonly iRepository: Repository<ImageEntity>,
+    // @InjectRepository(ImageEntity)
+    // private readonly iRepository: Repository<ImageEntity>,
     @InjectRepository(PhotoSizeEntity)
     private readonly phRepository: Repository<PhotoSizeEntity>,
   ) {}
@@ -38,17 +38,9 @@ export class BlogsRepositoryTO {
     if (user) {
       blog.user = user;
     }
-    // const image = new ImageEntity()
-    // await this.iRepository.save(image);
-    // console.log('image: ', image.id);
-    // blog.images = image
     blog.images = new ImageEntity();
-    // blog.imagesId = image.id
-    // const newBanInfoSuperUser = new BlogBanBySuperEntity()
-    // newBanInfoSuperUser.blogId = newBlog.id
     blog.banInfo = new BlogBanBySuperEntity();
     const newBlog = await this.bRepository.save(blog);
-    // await this.bRepository.manager.save(newBanInfoSuperUser);
     return newBlog.id;
   }
 

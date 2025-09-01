@@ -33,7 +33,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { LightsailStorageService } from '../../../core/settings/lightsail-storage.service';
 import sharp from 'sharp';
 import { PhotoSizeViewModel } from './models/output/photo-size.view.model';
-import { UsersCheckHandler } from '../../users/domain/users.check-handler';
 
 @Controller('blogger')
 export class BloggersController {
@@ -264,7 +263,7 @@ export class BloggersController {
       imageModel,
       req.headers.authorization as string
       );
-    return await this.blogsQueryRepository.getPhotoMetadata(blog.id)
+    return await this.blogsQueryRepository.getPhotoMetadata(blog!.id)
   }
 
   @Post('blogs/:blogId/images/main')
@@ -312,7 +311,7 @@ export class BloggersController {
       req.headers.authorization as string,
     );
 
-    const output = await this.blogsQueryRepository.getPhotoMetadata(blog.id)
+    const output = await this.blogsQueryRepository.getPhotoMetadata(blog!.id)
     return {
       main: output.main,
       wallpaper: output.wallpaper

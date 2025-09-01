@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BlogsRepositoryTO } from '../infrastructure/blogs.repository.to';
 import { BanInfoForUserDto } from '../api/models/input/ban-user-for-blog.dto';
 import { UsersService } from '../../users/application/users.service';
@@ -11,7 +15,7 @@ export class BlogsService {
   constructor(
     private readonly blogsRepository: BlogsRepositoryTO,
     private readonly usersService: UsersService,
-    private readonly usersCheckHandler: UsersCheckHandler
+    private readonly usersCheckHandler: UsersCheckHandler,
   ) {}
 
   async banUserForBlog(
@@ -47,13 +51,40 @@ export class BlogsService {
     return await this.blogsRepository.banBlogBySuperUser(blogId, dto);
   }
 
-  async addWallpaperImage(blogId: string, dto: PhotoSizeViewModel, bearerHeader: string) {
+  async addWallpaperImage(
+    blogId: string,
+    dto: PhotoSizeViewModel,
+    bearerHeader: string,
+  ) {
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
-    return await this.blogsRepository.addWallpaperImageToBlog(findedBlog, dto);
+    const user = await this.usersService.getUserByAuthToken(bearerHeader);
+    if (
+      this.usersCheckHandler.checkIsOwner(
+        Number(findedBlog.userId),
+        Number(user.id),
+      )
+    ) {
+      return await this.blogsRepository.addWallpaperImageToBlog(
+        findedBlog,
+        dto,
+      );
+    }
   }
 
-  async addMainImage(blogId: string, dto: PhotoSizeViewModel, bearerHeader: string) {
+  async addMainImage(
+    blogId: string,
+    dto: PhotoSizeViewModel,
+    bearerHeader: string,
+  ) {
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
-    return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
+    const user = await this.usersService.getUserByAuthToken(bearerHeader);
+    if (
+      this.usersCheckHandler.checkIsOwner(
+        Number(findedBlog.userId),
+        Number(user.id),
+      )
+    ) {
+      return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
+    }
   }
 }
