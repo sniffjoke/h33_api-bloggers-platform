@@ -8,10 +8,11 @@ import { PostsRepositoryTO } from '../posts/infrastructure/posts.repository.to';
 import { PostEntity } from '../posts/domain/posts.entity';
 import { CommentsRepositoryTO } from '../comments/infrastructure/comments.repository.to';
 import { CommentEntity } from '../comments/domain/comment.entity';
+import { PhotoSizeEntity } from '../blogs/domain/photoSize.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LikeEntity, PostEntity, CommentEntity]),
+    TypeOrmModule.forFeature([LikeEntity, PostEntity, CommentEntity, PhotoSizeEntity]),
   ],
   controllers: [],
   providers: [

@@ -5,6 +5,9 @@ import {Repository} from 'typeorm';
 import {PostEntity} from '../domain/posts.entity';
 import {ExtendedLikesInfoEntity} from '../domain/extended-likes-info.entity';
 import {UserEntity} from "../../users/domain/user.entity";
+import { BlogEntity } from '../../blogs/domain/blogs.entity';
+import { PhotoSizeViewModel } from '../../blogs/api/models/output/photo-size.view.model';
+import { PhotoSizeEntity } from '../../blogs/domain/photoSize.entity';
 
 
 @Injectable()
@@ -12,15 +15,17 @@ export class PostsRepositoryTO {
 
     constructor(
         @InjectRepository(PostEntity) private readonly pRepository: Repository<PostEntity>,
+        @InjectRepository(PhotoSizeEntity) private readonly phRepository: Repository<PhotoSizeEntity>
     ) {
     }
 
-    async createPost(postData: PostCreateModel, blogName: string, user?: UserEntity): Promise<string> {
+    async createPost(postData: PostCreateModel, blogName: string, blog: BlogEntity, user?: UserEntity): Promise<string> {
         const post = new PostEntity();
         post.title = postData.title;
         post.shortDescription = postData.shortDescription;
         post.content = postData.content;
         post.blogId = postData.blogId;
+        post.imagesId = blog.imagesId;
         post.blogName = blogName;
         if (user) {
             post.user = user
@@ -73,6 +78,21 @@ export class PostsRepositoryTO {
 
     async savePost(post: PostEntity) {
         return await this.pRepository.save(post);
+    }
+
+
+    // ----------------------_IMAGES_------------------------- //
+
+    async addMainImageToPost(blog: BlogEntity, post: PostEntity, dto: PhotoSizeViewModel) {
+        const phSize = new PhotoSizeEntity();
+        phSize.height = dto.height!;
+        phSize.width = dto.width!;
+        phSize.fileSize = dto.fileSize!;
+        phSize.url = dto.url;
+        phSize.imageId = blog.images.id;
+        await this.phRepository.save(phSize);
+        const updatedBlog = await this.findPostById(post.id);
+        return updatedBlog;
     }
 
 }

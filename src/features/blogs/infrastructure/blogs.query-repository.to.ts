@@ -276,7 +276,6 @@ export class BlogsQueryRepositoryTO {
       where: { id: blogId },
       relations: ['images', 'images.photoMetadata'],
     });
-    // console.log('blog: ', blog);
     let mainArr: Omit<
       PhotoSizeEntity,
       'id' | 'imageType' | 'imageId' | 'image'
@@ -308,4 +307,5 @@ export class BlogsQueryRepositoryTO {
       fileSize: photo.fileSize,
     };
   }
+
 }

@@ -262,7 +262,7 @@ describe('PostsController (e2e)', () => {
       expect(getPost.body.extendedLikesInfo.dislikesCount).toBe(0)
     });
 
-    it('/sa/blogs/blogId/:postId (DELETE)', async () => {
+    it('/sa/blogs/blogId/posts/:postId (DELETE)', async () => {
       const blog = await blogsManager.createBlog(createMockBlog(35));
       const newPost = await postsManager.createPost(createMockPost(15), blog.body.id);
       const response = await postsManager.deletePost(newPost.body.id, blog.body.id);
@@ -380,6 +380,51 @@ describe('PostsController (e2e)', () => {
         expect(typeof post.body.message).toBe('string');
       });
     });
+
+    describe('blogger/blogs/blogId/posts/ (e2e)', () => {
+      it('/:id/ban (PUT)', async () => {
+        const emailConfirmationInfo = usersService.createEmailConfirmation(true);
+        const user = await usersManager.createUser(createMockUser(1), emailConfirmationInfo);
+        const loginUser = await authManager.login(mockLoginData(1));
+        const blog = await blogsManager.createBlogByBlogger(
+          createMockBlog(1),
+          loginUser.body.accessToken,
+        );
+        const post = await postsManager.createPostByBlogger(createMockPost(1), loginUser.body.accessToken, blog.body.id);
+
+        console.log('blog: ', blog.body);
+        console.log('post: ', post.body);
+
+        // const findedBlog = await blogsManager.getBlogById(blog.body.id);
+
+        // const findedPost = await postsManager.getPostById(post.body.id);
+
+        // console.log('findedBlog: ', findedBlog.body);
+
+        // console.log('findedPost: ', findedPost.body);
+
+        // const updModel = {
+        //   isBanned: true,
+        // }
+
+        // const upd = await blogsManager.banBlogBySuperUser(updModel, blog.body.id);
+
+        // const findedBlog2 = await blogsManager.getBlogById(blog.body.id);
+        // console.log('findedBlog2: ', findedBlog2.body);
+
+        // const findedPost2 = await postsManager.getPostById(post.body.id);
+
+        // console.log('findedPost2: ', findedPost2.body);
+
+
+
+        // console.log('user: ', user.body.login);
+        // console.log('post: ', post.body);
+        // console.log('upd: ', upd.status)
+        // expect(blog.status).toBe(201);
+      });
+    });
+
 
   });
 });

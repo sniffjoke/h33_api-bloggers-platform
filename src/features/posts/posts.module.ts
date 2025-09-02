@@ -15,10 +15,11 @@ import { PostsQueryRepositoryTO } from './infrastructure/posts.query-repository.
 import { LikeEntity } from '../likes/domain/likes.entity';
 import { BlogEntity } from '../blogs/domain/blogs.entity';
 import {UsersCheckHandler} from "../users/domain/users.check-handler";
+import { PhotoSizeEntity } from '../blogs/domain/photoSize.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PostEntity, ExtendedLikesInfoEntity, LikeEntity, BlogEntity]),
+    TypeOrmModule.forFeature([PostEntity, ExtendedLikesInfoEntity, LikeEntity, BlogEntity, PhotoSizeEntity]),
     forwardRef(() => BlogsModule),
     CommentsModule,
     UsersModule,

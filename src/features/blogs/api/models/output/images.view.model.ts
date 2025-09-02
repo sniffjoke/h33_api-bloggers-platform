@@ -1,7 +1,6 @@
 import { PhotoSizeViewModel } from './photo-size.view.model';
 
-export class BlogImagesViewModel {
+export class ImagesViewModel {
     main: PhotoSizeViewModel[] = []
-    // wallpaper: PhotoSizeViewModel | null = null
     wallpaper: PhotoSizeViewModel | null = null
 }

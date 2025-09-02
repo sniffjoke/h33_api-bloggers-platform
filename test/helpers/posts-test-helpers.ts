@@ -73,6 +73,16 @@ export class PostsTestManager {
     return response
   }
 
+  //------------_BLOGGER PLATFORM_---------------//
+
+  async createPostByBlogger(createModel: PostCreateModelWithParams, accessToken: string, blogId: string) {
+    const response = await request(this.app.getHttpServer())
+      .post(`/blogger/blogs/${blogId}/posts`)
+      .send(createModel)
+      .set({ 'Authorization': 'Bearer ' +  accessToken});
+    return response;
+  }
+
 }
 
 export const createMockPost = (uniqueIndex: number) => ({

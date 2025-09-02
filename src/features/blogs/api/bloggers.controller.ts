@@ -267,7 +267,7 @@ export class BloggersController {
   }
 
   @Post('blogs/:blogId/images/main')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async addBlogMainImage(
     @UploadedFile() file: Express.Multer.File,
@@ -326,6 +326,7 @@ export class BloggersController {
 
   @Post('blogs/:blogId/posts/:postId/images/main')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
   async addPostMainImage(
     @UploadedFile() file: Express.Multer.File,
     @Param() idParams: any,
@@ -340,9 +341,17 @@ export class BloggersController {
     }
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
-    if (metadata.height !== 156 || metadata.width !== 156) {
-      throw new BadRequestException('Width|and|height must be as 156x156')
-    }
+
+    // const allowedSizes = new Set([
+    //   '940x432',
+    //   '300x180',
+    //   '149x96',
+    // ]);
+    // const sizeKey = `${metadata.width}x${metadata.height}`;
+    // if (!allowedSizes.has(sizeKey)) {
+    //   throw new BadRequestException('Invalid image size');
+    // }
+
     const url = await this.storage.uploadFile(
       `blogs/main/${Date.now()}-${file.originalname}`,
       file.buffer,
@@ -372,7 +381,6 @@ export class BloggersController {
     const output = await this.postsQueryRepository.getPhotoMetadata(post!.id)
     return {
       main: output.main,
-      wallpaper: output.wallpaper
     }
   }
 

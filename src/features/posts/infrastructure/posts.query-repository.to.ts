@@ -183,20 +183,13 @@ export class PostsQueryRepositoryTO {
           PhotoSizeEntity,
           'id' | 'imageType' | 'imageId' | 'image'
         >[] = [];
-        let wallpaper: Omit<
-          PhotoSizeEntity,
-          'id' | 'imageType' | 'imageId' | 'image'
-        > | null = null;
         post?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
             if (photo.imageType === ImageType.MAIN) {
                 mainArr.push(this.photoSizeOutput(photo));
-            } else {
-                wallpaper = this.photoSizeOutput(photo);
             }
         });
         return {
             main: mainArr,
-            wallpaper,
         };
     }
 

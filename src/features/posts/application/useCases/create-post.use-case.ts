@@ -28,11 +28,11 @@ export class CreatePostUseCase
   async execute(command: CreatePostCommand) {
     const findedBlog = await this.blogsRepository.findBlogById(command.postCreateModel.blogId);
     if (!command.bearerHeader) {
-      return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name);
+      return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name, findedBlog);
     }
     const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
     if (this.usersCheckHandler.checkIsOwner(Number(findedBlog.userId), Number(user.id))) {
-      return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name, user);
+      return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name, findedBlog, user);
     }
   }
 }
