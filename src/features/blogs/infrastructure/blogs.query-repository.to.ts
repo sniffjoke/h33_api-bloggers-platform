@@ -157,11 +157,6 @@ export class BlogsQueryRepositoryTO {
         wallpaper = this.photoSizeOutput(photo);
       }
     });
-    // return {
-    //   main: mainArr,
-    //   wallpaper
-    // };
-    // const output: typeof blog = {
     const output: BlogViewModel = {
       id: id.toString(),
       name,
@@ -170,8 +165,6 @@ export class BlogsQueryRepositoryTO {
       createdAt,
       isMembership,
       images: {
-        // main: [],
-        // wallpaper: null
         main: mainArr,
         wallpaper,
       },
