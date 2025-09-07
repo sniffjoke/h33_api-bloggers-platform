@@ -58,7 +58,7 @@ export class PostEntity {
     // @JoinColumn({ name: 'images' })
     // image: ImagesEntity;
 
-    @OneToOne(() => ImageEntity, (image) => image.post, { cascade: true, eager: true })
+    @ManyToOne(() => ImageEntity, (image) => image.post, { cascade: true, eager: true })
     @JoinColumn({ name: 'imagesId' })
     images: ImageEntity;
 }

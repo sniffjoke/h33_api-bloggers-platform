@@ -25,6 +25,6 @@ export class ImageEntity {
   @OneToOne(() => BlogEntity, (blog) => blog.images)
   blog: BlogEntity;
 
-  @OneToOne(() => PostEntity, (post) => post.images)
+  @OneToMany(() => PostEntity, (post) => post.images)
   post: PostEntity;
 }
