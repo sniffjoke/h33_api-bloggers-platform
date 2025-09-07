@@ -420,9 +420,10 @@ describe('BlogsController (e2e)', () => {
         createMockBlog(1),
         loginUser.body.accessToken,
       );
-      // const post = await postsManager.createPost(createMockPost(1), blog.body.id);
+      const post = await postsManager.createPost(createMockPost(1), blog.body.id);
 
       console.log('blog: ', blog.body);
+      console.log('post: ', post.body);
 
       // const findedBlog = await blogsManager.getBlogById(blog.body.id);
 

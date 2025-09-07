@@ -233,9 +233,7 @@ export class PostsQueryRepositoryTO {
         mainArr.push(this.photoSizeOutput(photo));
       }
     });
-    return {
-      main: mainArr,
-    };
+    return mainArr;
   }
 
   photoSizeOutput(

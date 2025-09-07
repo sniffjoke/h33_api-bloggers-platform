@@ -10,6 +10,8 @@ import { PhotoSizeViewModel } from '../../blogs/api/models/output/photo-size.vie
 import { BlogsRepositoryTO } from '../../blogs/infrastructure/blogs.repository.to';
 import { UsersCheckHandler } from '../../users/domain/users.check-handler';
 import { UsersService } from '../../users/application/users.service';
+import sharp from 'sharp';
+import { ImageEntity } from '../../blogs/domain/images.entity';
 
 @Injectable()
 export class PostsService {
@@ -20,7 +22,7 @@ export class PostsService {
     private readonly usersRepository: UsersRepositoryTO,
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly usersCheckHandler: UsersCheckHandler,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
   ) {
   }
 
@@ -80,7 +82,6 @@ export class PostsService {
     const likeDetailsMap = await Promise.all(
       likeDetails.map(async (like: any) => {
         const user = await this.usersRepository.findUserById(like.userId);
-        console.log(1)
         return {
           addedAt: like.addedAt,
           userId: like.userId.toString(),
@@ -110,23 +111,55 @@ export class PostsService {
   async addMainImageForPost(
     blogId: string,
     postId: string,
-    dto: PhotoSizeViewModel,
+    url: string,
     bearerHeader: string,
+    images: Omit<PhotoSizeViewModel, 'url'>[]
   ) {
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
     const findedPost = await this.postsRepository.findPostById(postId)
     const user = await this.usersService.getUserByAuthToken(bearerHeader);
-    if (
-      this.usersCheckHandler.checkIsOwner(
+    // if (
+    //   this.usersCheckHandler.checkIsOwner(
         // Number(findedBlog.userId),
         // Number(user.id),
         // ) && this.usersCheckHandler.checkIsOwner(
-        Number(findedPost.userId),
-        Number(user.id),
-      )
-    ) {
-      return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
-    }
+        // Number(findedPost.userId),
+        // Number(user.id),
+      // )
+    // ) {
+      // return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
+      return await Promise.all(images.map(async (image: any) => {
+        return await this.blogsRepository.addMainImageToBlog(findedBlog, {...image, url});
+      }))
+    // }
+  }
+
+  private readonly sizes = [
+    { width: 940, height: 432 },
+    { width: 300, height: 180 },
+    { width: 149, height: 96 },
+  ]
+
+  async generateResizedImages(file: Express.Multer.File) {
+
+    const results: Omit<PhotoSizeViewModel, 'url'>[] = await Promise.all(
+      this.sizes.map(async (size) => {
+        const buffer = await sharp(file.buffer)
+          .resize(size.width, size.height, {
+            fit: 'cover',
+            position: 'center',
+          })
+          .toBuffer();
+
+        return {
+          width: size.width,
+          height: size.height,
+          fileSize: buffer.length,
+        };
+      }),
+    );
+
+    return results;
   }
 
 }

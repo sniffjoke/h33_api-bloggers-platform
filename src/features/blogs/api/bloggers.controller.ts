@@ -342,18 +342,20 @@ export class BloggersController {
     const image = await sharp(file.buffer)
     const metadata = await image.metadata()
 
-    // const allowedSizes = new Set([
-    //   '940x432',
+    const allowedSizes = new Set([
+      '940x432',
     //   '300x180',
     //   '149x96',
-    // ]);
-    // const sizeKey = `${metadata.width}x${metadata.height}`;
-    // if (!allowedSizes.has(sizeKey)) {
-    //   throw new BadRequestException('Invalid image size');
-    // }
+    ]);
+    const sizeKey = `${metadata.width}x${metadata.height}`;
+    if (!allowedSizes.has(sizeKey)) {
+      throw new BadRequestException('Invalid image size');
+    }
+
+
 
     const url = await this.storage.uploadFile(
-      `blogs/main/${Date.now()}-${file.originalname}`,
+      `posts/main/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype
     )
@@ -365,23 +367,26 @@ export class BloggersController {
         `File is too much: ${fileSizeKb} Kb. Max 100 Kb.`,
       );
     }
-    const imageModel: PhotoSizeViewModel = {
-      url,
-      width: metadata.width,
-      height: metadata.height,
-      fileSize: buffer.length
-    }
-    const post = await this.postsService.addMainImageForPost(
+    const images = await this.postsService.generateResizedImages(file)
+    // const imageModel: PhotoSizeViewModel = {
+    //   url,
+    //   width: metadata.width,
+    //   height: metadata.height,
+    //   fileSize: buffer.length
+    // }
+    const posts = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
-      imageModel,
+      url,
       req.headers.authorization as string,
+      images
     );
-
-    const output = await this.postsQueryRepository.getPhotoMetadata(post!.id)
-    return {
-      main: output.main,
-    }
+    // console.log('posts: ', posts);
+    const imagesOutput = await Promise.all(posts.map(async post => {
+      return this.postsQueryRepository.getPhotoMetadata(post!.id)
+    }))
+    console.log('imagesOutput: ', imagesOutput);
+    return imagesOutput
   }
 
 
