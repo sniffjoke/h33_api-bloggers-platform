@@ -158,7 +158,7 @@ export class PostsQueryRepositoryTO {
     const photoMetadata = await this.phRepository.find({
       where: { imageId: post.imagesId },
     });
-    console.log('photoMetadata: ', photoMetadata);
+    // console.log('photoMetadata: ', photoMetadata);
     const findedBlog = await this.bRepository.findOne({
       where: { id: post.blogId },
       relations: ['banInfo'],
@@ -226,6 +226,7 @@ export class PostsQueryRepositoryTO {
       where: { id: postId },
       relations: ['images', 'images.photoMetadata'],
     });
+    // console.log('post: ', post);
     let mainArr: Omit<
       PhotoSizeEntity,
       'id' | 'imageType' | 'imageId' | 'image'

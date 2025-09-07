@@ -374,7 +374,7 @@ export class BloggersController {
     //   height: metadata.height,
     //   fileSize: buffer.length
     // }
-    const posts = await this.postsService.addMainImageForPost(
+    const createThreeImages = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
       url,
@@ -382,11 +382,12 @@ export class BloggersController {
       images
     );
     // console.log('posts: ', posts);
-    const imagesOutput = await Promise.all(posts!.map(async post => {
-      return this.postsQueryRepository.getPhotoMetadata(post.id)
-    }))
-    console.log('imagesOutput: ', imagesOutput);
-    return imagesOutput
+    // const imagesOutput = await Promise.all(createThreeImages!.map(async post => {
+      const main = await this.postsQueryRepository.getPhotoMetadata(idParams.postId)
+    return {main}
+    // }))
+    // console.log('imagesOutput: ', imagesOutput);
+    // return imagesOutput
   }
 
 

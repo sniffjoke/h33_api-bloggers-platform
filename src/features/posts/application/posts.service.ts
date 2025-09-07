@@ -129,7 +129,9 @@ export class PostsService {
     ) {
       // return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
       return await Promise.all(images.map(async (image: any) => {
-        return await this.blogsRepository.addMainImageToBlog(findedBlog, {...image, url});
+        const blog = await this.blogsRepository.addMainImageToBlog(findedBlog, {...image, url});
+        // console.log('blog: ', blog.images.photoMetadata);
+        return blog
       }))
     }
   }
