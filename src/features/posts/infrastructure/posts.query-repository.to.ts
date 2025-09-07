@@ -157,7 +157,7 @@ export class PostsQueryRepositoryTO {
     };
     const photoMetadata = await this.phRepository.find({
       where: { imageId: post.imagesId },
-    })
+    });
     console.log('photoMetadata: ', photoMetadata);
     const findedBlog = await this.bRepository.findOne({
       where: { id: post.blogId },
@@ -186,11 +186,13 @@ export class PostsQueryRepositoryTO {
       PhotoSizeEntity,
       'id' | 'imageType' | 'imageId' | 'image'
     >[] = [];
-    photoMetadata.forEach((photo: PhotoSizeEntity) => {
-      if (photo.imageType === ImageType.MAIN) {
-        mainArr.push(this.photoSizeOutput(photo));
-      }
-    });
+    if (photoMetadata) {
+      photoMetadata.forEach((photo: PhotoSizeEntity) => {
+        if (photo.imageType === ImageType.MAIN) {
+          mainArr.push(this.photoSizeOutput(photo));
+        }
+      });
+    }
     const output = {
       id: id.toString(),
       title,
@@ -214,7 +216,7 @@ export class PostsQueryRepositoryTO {
     //     main: mainArr
     //   }
     // }
-    return output
+    return output;
   }
 
   // ---------------------_IMAGES_------------------------ //
