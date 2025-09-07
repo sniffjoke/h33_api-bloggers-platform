@@ -382,8 +382,8 @@ export class BloggersController {
       images
     );
     // console.log('posts: ', posts);
-    const imagesOutput = await Promise.all(posts.map(async post => {
-      return this.postsQueryRepository.getPhotoMetadata(post!.id)
+    const imagesOutput = await Promise.all(posts!.map(async post => {
+      return this.postsQueryRepository.getPhotoMetadata(post.id)
     }))
     console.log('imagesOutput: ', imagesOutput);
     return imagesOutput

@@ -118,20 +118,20 @@ export class PostsService {
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
     const findedPost = await this.postsRepository.findPostById(postId)
     const user = await this.usersService.getUserByAuthToken(bearerHeader);
-    // if (
-    //   this.usersCheckHandler.checkIsOwner(
+    if (
+      this.usersCheckHandler.checkIsOwner(
         // Number(findedBlog.userId),
         // Number(user.id),
         // ) && this.usersCheckHandler.checkIsOwner(
-        // Number(findedPost.userId),
-        // Number(user.id),
-      // )
-    // ) {
+        Number(findedPost.userId),
+        Number(user.id),
+      )
+    ) {
       // return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
       return await Promise.all(images.map(async (image: any) => {
         return await this.blogsRepository.addMainImageToBlog(findedBlog, {...image, url});
       }))
-    // }
+    }
   }
 
   private readonly sizes = [
