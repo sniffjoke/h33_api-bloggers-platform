@@ -150,7 +150,7 @@ export class PostsService {
   }
 
   private readonly sizes = [
-    // { width: 940, height: 432 },
+    { width: 940, height: 432 },
     { width: 300, height: 180 },
     { width: 149, height: 96 },
   ];

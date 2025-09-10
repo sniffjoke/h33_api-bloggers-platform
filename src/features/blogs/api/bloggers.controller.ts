@@ -392,14 +392,13 @@ export class BloggersController {
       );
     }))
     console.log('upload resized: ', uploadResizedImages);
-    // console.log('images: ', images);
     // const imageModel: PhotoSizeViewModel = {
     //   url,
     //   width: metadata.width,
     //   height: metadata.height,
     //   fileSize: buffer.length
     // }
-    const createThreeImages = await this.postsService.addMainImageForPost(
+    const addCroppedImagesToDB = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
       uploadResizedImages,
