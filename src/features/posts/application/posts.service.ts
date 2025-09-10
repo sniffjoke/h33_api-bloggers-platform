@@ -11,7 +11,6 @@ import { BlogsRepositoryTO } from '../../blogs/infrastructure/blogs.repository.t
 import { UsersCheckHandler } from '../../users/domain/users.check-handler';
 import { UsersService } from '../../users/application/users.service';
 import sharp from 'sharp';
-import { ImageEntity } from '../../blogs/domain/images.entity';
 
 @Injectable()
 export class PostsService {
@@ -23,8 +22,7 @@ export class PostsService {
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly usersCheckHandler: UsersCheckHandler,
     private readonly usersService: UsersService,
-  ) {
-  }
+  ) {}
 
   async updatePostByIdWithLikeStatus(bearerHeader: string, postId: string) {
     const token = this.tokensService.getToken(bearerHeader);
@@ -37,12 +35,14 @@ export class PostsService {
     };
   }
 
-  async generatePostsWithLikesDetails(items: PostCreateModel[], bearerToken: string) {
+  async generatePostsWithLikesDetails(
+    items: PostCreateModel[],
+    bearerToken: string,
+  ) {
     const newItems = await Promise.all(
       items.map(async (item) => {
-          return this.generateOnePostWithLikesDetails(item, bearerToken);
-        },
-      ),
+        return this.generateOnePostWithLikesDetails(item, bearerToken);
+      }),
     );
     return newItems;
   }
@@ -62,21 +62,24 @@ export class PostsService {
     }
     const likeStatus = await this.dataSource.query(
       `
-            SELECT *
-            FROM likes
-            WHERE "postId" = $1 AND "userId" = $2 AND "hyde" = $3
+          SELECT *
+          FROM likes
+          WHERE "postId" = $1
+            AND "userId" = $2
+            AND "hyde" = $3
       `,
       [post.id, user?.id, false],
     );
     const likeDetails = await this.dataSource.query(
       `
-                    SELECT *
-                    FROM likes
-                    WHERE "postId" = $1 AND "status" = $2 AND "hyde" = $3
-                    ORDER BY "addedAt" DESC
-                    LIMIT 3
-                              
-          `,
+          SELECT *
+          FROM likes
+          WHERE "postId" = $1
+            AND "status" = $2
+            AND "hyde" = $3
+          ORDER BY "addedAt" DESC LIMIT 3
+
+      `,
       [post.id, LikeStatus.Like, false],
     );
     const likeDetailsMap = await Promise.all(
@@ -89,8 +92,13 @@ export class PostsService {
         };
       }),
     );
-    const myStatus = user && likeStatus.length ? likeStatus[0].status : LikeStatus.None;
-    const postDataWithInfo = this.statusAndNewLikesPayload(post, myStatus, likeDetailsMap);
+    const myStatus =
+      user && likeStatus.length ? likeStatus[0].status : LikeStatus.None;
+    const postDataWithInfo = this.statusAndNewLikesPayload(
+      post,
+      myStatus,
+      likeDetailsMap,
+    );
     return postDataWithInfo;
   }
 
@@ -111,12 +119,12 @@ export class PostsService {
   async addMainImageForPost(
     blogId: string,
     postId: string,
-    url: string,
+    urls: string[],
     bearerHeader: string,
-    images: Omit<PhotoSizeViewModel, 'url'>[]
+    images: Omit<PhotoSizeViewModel, 'url'>[],
   ) {
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
-    const findedPost = await this.postsRepository.findPostById(postId)
+    const findedPost = await this.postsRepository.findPostById(postId);
     const user = await this.usersService.getUserByAuthToken(bearerHeader);
     if (
       this.usersCheckHandler.checkIsOwner(
@@ -128,22 +136,26 @@ export class PostsService {
       )
     ) {
       // return await this.blogsRepository.addMainImageToBlog(findedBlog, dto);
-      return await Promise.all(images.map(async (image: any) => {
-        const blog = await this.blogsRepository.addMainImageToBlog(findedBlog, {...image, url});
-        // console.log('blog: ', blog.images.photoMetadata);
-        return blog
-      }))
+      return await Promise.all(
+        images.map(async (image: any, index) => {
+          const blog = await this.blogsRepository.addMainImageToBlog(
+            findedBlog,
+            { ...image, url: urls[index] },
+          );
+          // console.log('blog: ', blog.images.photoMetadata);
+          return blog;
+        }),
+      );
     }
   }
 
   private readonly sizes = [
-    { width: 940, height: 432 },
+    // { width: 940, height: 432 },
     { width: 300, height: 180 },
     { width: 149, height: 96 },
-  ]
+  ];
 
   async generateResizedImages(file: Express.Multer.File) {
-
     const results: Omit<PhotoSizeViewModel, 'url'>[] = await Promise.all(
       this.sizes.map(async (size) => {
         const buffer = await sharp(file.buffer)
@@ -157,13 +169,13 @@ export class PostsService {
           width: size.width,
           height: size.height,
           fileSize: buffer.length,
+          buffer,
         };
       }),
     );
 
     return results;
   }
-
 }
 
 // async updatePost(id: string, models: PostCreateModel) {

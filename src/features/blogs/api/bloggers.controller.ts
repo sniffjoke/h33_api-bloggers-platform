@@ -9,8 +9,10 @@ import {
   Post,
   Put,
   Query,
-  Req, UploadedFile,
-  UseGuards, UseInterceptors,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BlogCreateModel } from './models/input/create-blog.input.model';
 import { PostCreateModelWithParams } from '../../posts/api/models/input/create-post.input.model';
@@ -46,7 +48,7 @@ export class BloggersController {
     private readonly storage: LightsailStorageService,
   ) {}
 
-    // TODO: метод execute pattern (service)
+  // TODO: метод execute pattern (service)
 
   @Post('blogs')
   @UseGuards(JwtAuthGuard)
@@ -214,9 +216,7 @@ export class BloggersController {
     return items;
   }
 
-
   // ----------------------_IMAGES_------------------------- //
-
 
   @Post('blogs/:blogId/images/wallpaper')
   @UseGuards(JwtAuthGuard)
@@ -224,26 +224,34 @@ export class BloggersController {
   async addBlogWallpaperImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('blogId') blogId: string,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     if (!file) {
       throw new BadRequestException('Файл обязателен');
     }
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/tiff', 'image/avif'];
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/tiff',
+      'image/avif',
+    ];
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
+      throw new BadRequestException(
+        `Неподдерживаемый формат: ${file.mimetype}`,
+      );
     }
-    const image = await sharp(file.buffer)
-    const metadata = await image.metadata()
+    const image = await sharp(file.buffer);
+    const metadata = await image.metadata();
     if (metadata.height !== 312 || metadata.width !== 1028) {
-      throw new BadRequestException('Width|and|height must be as 1028x312')
+      throw new BadRequestException('Width|and|height must be as 1028x312');
     }
     const url = await this.storage.uploadFile(
       `blogs/wallpaper/${Date.now()}-${file.originalname}`,
       file.buffer,
-      file.mimetype
-    )
-    const buffer = file.buffer
+      file.mimetype,
+    );
+    const buffer = file.buffer;
     const fileSizeKb = Math.round(buffer.length / 1024);
 
     if (fileSizeKb > 100) {
@@ -256,14 +264,14 @@ export class BloggersController {
       url,
       width: metadata.width,
       height: metadata.height,
-      fileSize: buffer.length
-    }
+      fileSize: buffer.length,
+    };
     const blog = await this.blogsService.addWallpaperImage(
       blogId,
       imageModel,
-      req.headers.authorization as string
-      );
-    return await this.blogsQueryRepository.getPhotoMetadata(blog!.id)
+      req.headers.authorization as string,
+    );
+    return await this.blogsQueryRepository.getPhotoMetadata(blog!.id);
   }
 
   @Post('blogs/:blogId/images/main')
@@ -272,26 +280,34 @@ export class BloggersController {
   async addBlogMainImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('blogId') blogId: string,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     if (!file) {
       throw new BadRequestException('Файл обязателен');
     }
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/tiff', 'image/avif'];
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/tiff',
+      'image/avif',
+    ];
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
+      throw new BadRequestException(
+        `Неподдерживаемый формат: ${file.mimetype}`,
+      );
     }
-    const image = await sharp(file.buffer)
-    const metadata = await image.metadata()
+    const image = await sharp(file.buffer);
+    const metadata = await image.metadata();
     if (metadata.height !== 156 || metadata.width !== 156) {
-      throw new BadRequestException('Width|and|height must be as 156x156')
+      throw new BadRequestException('Width|and|height must be as 156x156');
     }
     const url = await this.storage.uploadFile(
       `blogs/main/${Date.now()}-${file.originalname}`,
       file.buffer,
-      file.mimetype
-    )
-    const buffer = file.buffer
+      file.mimetype,
+    );
+    const buffer = file.buffer;
     const fileSizeKb = Math.round(buffer.length / 1024);
 
     if (fileSizeKb > 100) {
@@ -303,26 +319,20 @@ export class BloggersController {
       url,
       width: metadata.width,
       height: metadata.height,
-      fileSize: buffer.length
-    }
+      fileSize: buffer.length,
+    };
     const blog = await this.blogsService.addMainImage(
       blogId,
       imageModel,
       req.headers.authorization as string,
     );
 
-    const output = await this.blogsQueryRepository.getPhotoMetadata(blog!.id)
+    const output = await this.blogsQueryRepository.getPhotoMetadata(blog!.id);
     return {
       main: output.main,
-      wallpaper: output.wallpaper
-    }
+      wallpaper: output.wallpaper,
+    };
   }
-
-
-
-
-
-
 
   @Post('blogs/:blogId/posts/:postId/images/main')
   @UseGuards(JwtAuthGuard)
@@ -335,31 +345,37 @@ export class BloggersController {
     if (!file) {
       throw new BadRequestException('Файл обязателен');
     }
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/tiff', 'image/avif'];
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/tiff',
+      'image/avif',
+    ];
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`Неподдерживаемый формат: ${file.mimetype}`);
+      throw new BadRequestException(
+        `Неподдерживаемый формат: ${file.mimetype}`,
+      );
     }
-    const image = await sharp(file.buffer)
-    const metadata = await image.metadata()
+    const image = await sharp(file.buffer);
+    const metadata = await image.metadata();
 
     const allowedSizes = new Set([
       '940x432',
-    //   '300x180',
-    //   '149x96',
+      //   '300x180',
+      //   '149x96',
     ]);
     const sizeKey = `${metadata.width}x${metadata.height}`;
     if (!allowedSizes.has(sizeKey)) {
       throw new BadRequestException('Invalid image size');
     }
 
-
-
     const url = await this.storage.uploadFile(
       `posts/main/${Date.now()}-${file.originalname}`,
       file.buffer,
-      file.mimetype
-    )
-    const buffer = file.buffer
+      file.mimetype,
+    );
+    const buffer = file.buffer;
     const fileSizeKb = Math.round(buffer.length / 1024);
 
     if (fileSizeKb > 100) {
@@ -367,7 +383,16 @@ export class BloggersController {
         `File is too much: ${fileSizeKb} Kb. Max 100 Kb.`,
       );
     }
-    const images = await this.postsService.generateResizedImages(file)
+    const images = await this.postsService.generateResizedImages(file);
+    const uploadResizedImages = await Promise.all(images.map(async image => {
+      return await this.storage.uploadFile(
+        `posts/main/resize-${image.width}x${image.height}-${file.originalname}`,
+        file.buffer,
+        file.mimetype,
+      );
+    }))
+    console.log('upload resized: ', uploadResizedImages);
+    // console.log('images: ', images);
     // const imageModel: PhotoSizeViewModel = {
     //   url,
     //   width: metadata.width,
@@ -377,18 +402,18 @@ export class BloggersController {
     const createThreeImages = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
-      url,
+      uploadResizedImages,
       req.headers.authorization as string,
-      images
+      images,
     );
     // console.log('posts: ', posts);
     // const imagesOutput = await Promise.all(createThreeImages!.map(async post => {
-      const main = await this.postsQueryRepository.getPhotoMetadata(idParams.postId)
-    return {main}
+    const main = await this.postsQueryRepository.getPhotoMetadata(
+      idParams.postId,
+    );
+    return { main };
     // }))
     // console.log('imagesOutput: ', imagesOutput);
     // return imagesOutput
   }
-
-
 }
