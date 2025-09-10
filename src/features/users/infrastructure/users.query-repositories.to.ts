@@ -53,7 +53,7 @@ export class UsersQueryRepositoryTO {
     //     take: generateQuery.pageSize,
     //     skip: (generateQuery.page - 1) * generateQuery.pageSize,
     //   });
-    console.log(generateQuery.banStatus);
+    // console.log(generateQuery.banStatus);
     const items = this.uRepository
       .createQueryBuilder('u')
       .leftJoinAndSelect('u.banInfo', 'b')

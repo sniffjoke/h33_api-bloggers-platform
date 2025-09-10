@@ -123,6 +123,7 @@ export class PostsService {
     bearerHeader: string,
     images: Omit<PhotoSizeViewModel, 'url'>[],
   ) {
+    console.log('urls: ', urls);
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
     const findedPost = await this.postsRepository.findPostById(postId);
     const user = await this.usersService.getUserByAuthToken(bearerHeader);

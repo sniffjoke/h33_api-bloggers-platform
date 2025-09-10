@@ -403,7 +403,7 @@ export class BloggersController {
       idParams.postId,
       [...uploadResizedImages, url],
       req.headers.authorization as string,
-      [imageModel, ...images],
+      [...images, imageModel],
     );
     // console.log('posts: ', posts);
     // const imagesOutput = await Promise.all(createThreeImages!.map(async post => {
