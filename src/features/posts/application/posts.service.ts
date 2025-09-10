@@ -124,6 +124,7 @@ export class PostsService {
     images: Omit<PhotoSizeViewModel, 'url'>[],
   ) {
     console.log('urls: ', urls);
+    console.log('images: ', images);
     const findedBlog = await this.blogsRepository.findBlogById(blogId);
     const findedPost = await this.postsRepository.findPostById(postId);
     const user = await this.usersService.getUserByAuthToken(bearerHeader);
@@ -157,7 +158,7 @@ export class PostsService {
   ];
 
   async generateResizedImages(file: Express.Multer.File) {
-    const results: Omit<PhotoSizeViewModel, 'url'>[] = await Promise.all(
+    const results = await Promise.all(
       this.sizes.map(async (size) => {
         const buffer = await sharp(file.buffer)
           .resize(size.width, size.height, {
@@ -170,7 +171,7 @@ export class PostsService {
           width: size.width,
           height: size.height,
           fileSize: buffer.length,
-          // buffer,
+          buffer,
         };
       }),
     );

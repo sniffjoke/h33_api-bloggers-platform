@@ -387,13 +387,13 @@ export class BloggersController {
     const uploadResizedImages = await Promise.all(images.map(async image => {
       return await this.storage.uploadFile(
         `posts/main/resize-${image.width}x${image.height}-${file.originalname}`,
-        file.buffer,
+        image.buffer,
         file.mimetype,
       );
     }))
     console.log('upload resized: ', uploadResizedImages);
-    const imageModel: PhotoSizeViewModel = {
-      url,
+    const imageModel: Omit<PhotoSizeViewModel, 'url'> = {
+      // url,
       width: metadata.width,
       height: metadata.height,
       fileSize: buffer.length
