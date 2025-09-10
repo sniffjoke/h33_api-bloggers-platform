@@ -392,18 +392,18 @@ export class BloggersController {
       );
     }))
     console.log('upload resized: ', uploadResizedImages);
-    // const imageModel: PhotoSizeViewModel = {
-    //   url,
-    //   width: metadata.width,
-    //   height: metadata.height,
-    //   fileSize: buffer.length
-    // }
+    const imageModel: PhotoSizeViewModel = {
+      url,
+      width: metadata.width,
+      height: metadata.height,
+      fileSize: buffer.length
+    }
     const addCroppedImagesToDB = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
-      uploadResizedImages,
+      [...uploadResizedImages, url],
       req.headers.authorization as string,
-      images,
+      [imageModel, ...images],
     );
     // console.log('posts: ', posts);
     // const imagesOutput = await Promise.all(createThreeImages!.map(async post => {
