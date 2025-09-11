@@ -5,6 +5,7 @@ import { LikeEntity } from '../../likes/domain/likes.entity';
 import { ExtendedLikesInfoEntity } from './extended-likes-info.entity';
 import {UserEntity} from "../../users/domain/user.entity";
 import { ImageEntity } from '../../blogs/domain/images.entity';
+import { PhotoSizeEntity } from '../../blogs/domain/photoSize.entity';
 
 
 @Entity('posts')
@@ -54,11 +55,10 @@ export class PostEntity {
     @JoinColumn({ name: 'userId' })
     user: UserEntity;
 
-    // @OneToOne(() => ImagesEntity, (image) => image.post, { onDelete: 'CASCADE' })
-    // @JoinColumn({ name: 'images' })
-    // image: ImagesEntity;
-
     @ManyToOne(() => ImageEntity, (image) => image.post, { cascade: true, eager: true })
     @JoinColumn({ name: 'imagesId' })
     images: ImageEntity;
+
+    @OneToMany(() => PhotoSizeEntity, (photo) => photo.post, { cascade: true, eager: true })
+    photoSize: PhotoSizeEntity[];
 }

@@ -144,11 +144,11 @@ export class BlogsQueryRepositoryTO {
     } = blog;
     let mainArr: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     >[] = [];
     let wallpaper: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     > | null = null;
     blog?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
       if (photo.imageType === ImageType.MAIN) {
@@ -271,11 +271,11 @@ export class BlogsQueryRepositoryTO {
     });
     let mainArr: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     >[] = [];
     let wallpaper: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     > | null = null;
     blog?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
       if (photo.imageType === ImageType.MAIN) {
@@ -292,7 +292,7 @@ export class BlogsQueryRepositoryTO {
 
   photoSizeOutput(
     photo: PhotoSizeEntity,
-  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image'> {
+  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'> {
     return {
       url: photo.url,
       height: photo.height,

@@ -95,8 +95,10 @@ export class PostsQueryRepositoryTO {
 
     const itemsOutput = await Promise.all(items.map(async (item) => {
       const photoMetadata = await this.phRepository.find({
-        where: { imageId: item.imagesId },
+        // where: { imageId: item.imagesId },
+        where: { postId: item.id },
       });
+      console.log('photoMetadata: ', photoMetadata);
       return this.postOutputMap(item, photoMetadata)
     }));
     const resultPosts = new PaginationBaseModel<PostViewModel>(
@@ -165,7 +167,8 @@ export class PostsQueryRepositoryTO {
       imagesId: findedPost.imagesId,
     };
     const photoMetadata = await this.phRepository.find({
-      where: { imageId: post.imagesId },
+      // where: { imageId: post.imagesId },
+      where: { postId: post.id },
     });
     // console.log('photoMetadata: ', photoMetadata);
     const findedBlog = await this.bRepository.findOne({
@@ -193,7 +196,7 @@ export class PostsQueryRepositoryTO {
     } = post;
     let mainArr: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     >[] = [];
     if (photoMetadata) {
       photoMetadata.forEach((photo: PhotoSizeEntity) => {
@@ -238,7 +241,7 @@ export class PostsQueryRepositoryTO {
     // console.log('post: ', post);
     let mainArr: Omit<
       PhotoSizeEntity,
-      'id' | 'imageType' | 'imageId' | 'image'
+      'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     >[] = [];
     post?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
       if (photo.imageType === ImageType.MAIN) {
@@ -250,7 +253,7 @@ export class PostsQueryRepositoryTO {
 
   photoSizeOutput(
     photo: PhotoSizeEntity,
-  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image'> {
+  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'> {
     return {
       url: photo.url,
       height: photo.height,

@@ -398,7 +398,7 @@ export class BloggersController {
       height: metadata.height,
       fileSize: buffer.length
     }
-    const addCroppedImagesToDB = await this.postsService.addMainImageForPost(
+    const addImagesToDB = await this.postsService.addMainImageForPost(
       idParams.blogId,
       idParams.postId,
       [...uploadResizedImages, url],

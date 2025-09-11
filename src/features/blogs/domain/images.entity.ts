@@ -13,8 +13,6 @@ export class ImageEntity {
   @PrimaryGeneratedColumn()
   id: string;
 
-  // @Column({nullable: true})
-  // postId: string;
 
   @OneToMany(() => PhotoSizeEntity, (photoSize) => photoSize.image, {
     cascade: true,

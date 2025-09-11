@@ -187,12 +187,15 @@ export class BlogsRepositoryTO {
     return updatedBlog;
   }
 
-  async addMainImageToBlog(blog: BlogEntity, dto: PhotoSizeViewModel) {
+  async addMainImageToBlog(blog: BlogEntity, dto: PhotoSizeViewModel, postId?: string) {
     const phSize = new PhotoSizeEntity();
     phSize.height = dto.height!;
     phSize.width = dto.width!;
     phSize.fileSize = dto.fileSize!;
     phSize.url = dto.url;
+    if (postId) {
+      phSize.postId = postId;
+    }
     phSize.imageId = blog.images.id;
     await this.phRepository.save(phSize);
     const updatedBlog = await this.findBlogById(blog.id);

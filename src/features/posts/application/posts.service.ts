@@ -144,6 +144,7 @@ export class PostsService {
           const blog = await this.blogsRepository.addMainImageToBlog(
             findedBlog,
             { ...image, url: urls[index] },
+            postId
           );
           // console.log('blog: ', blog.images.photoMetadata);
           return blog;
