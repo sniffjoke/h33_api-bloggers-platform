@@ -123,7 +123,7 @@ export class PostsQueryRepositoryTO {
       pagesCount,
       page: query.pageNumber ? Number(query.pageNumber) : 1,
       sortBy: query.sortBy ? query.sortBy : 'createdAt',
-      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      sortDirection: query.sortDirection ? query.sortDirection : 'asc',
     };
   }
 
