@@ -391,7 +391,7 @@ export class BloggersController {
         file.mimetype,
       );
     }))
-    console.log('upload resized: ', uploadResizedImages);
+    // console.log('upload resized: ', uploadResizedImages);
     const imageModel: Omit<PhotoSizeViewModel, 'url'> = {
       // url,
       width: metadata.width,

@@ -44,6 +44,7 @@ export class PostsService {
         return this.generateOnePostWithLikesDetails(item, bearerToken);
       }),
     );
+    // console.log('newItems: ', newItems);
     return newItems;
   }
 

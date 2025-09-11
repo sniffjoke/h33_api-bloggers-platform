@@ -34,6 +34,7 @@ export class PostsQueryRepositoryTO {
       ? await this.pRepository
           .createQueryBuilder('p')
           .innerJoin('extendedLikesInfo', 'e', 'e."postId" = p."id"')
+          .leftJoin('images', 'i', 'i."id" = p."imagesId"')
           .select([
             'p."id"',
             'p."title"',
@@ -44,6 +45,7 @@ export class PostsQueryRepositoryTO {
             'p."createdAt"',
             'e."likesCount"',
             'e."dislikesCount"',
+            'p."imagesId"',
           ])
           .where('p.blogId = :blogId', { blogId })
           .orderBy(
@@ -87,9 +89,16 @@ export class PostsQueryRepositoryTO {
           likesCount: post.likesCount,
           dislikesCount: post.dislikesCount,
         },
+        imagesId: post.imagesId,
       };
     });
-    const itemsOutput = items.map((item) => this.postOutputMap(item));
+
+    const itemsOutput = await Promise.all(items.map(async (item) => {
+      const photoMetadata = await this.phRepository.find({
+        where: { imageId: item.imagesId },
+      });
+      return this.postOutputMap(item, photoMetadata)
+    }));
     const resultPosts = new PaginationBaseModel<PostViewModel>(
       generateQuery,
       itemsOutput,
