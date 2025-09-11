@@ -93,14 +93,16 @@ export class PostsQueryRepositoryTO {
       };
     });
 
-    const itemsOutput = await Promise.all(items.map(async (item) => {
-      const photoMetadata = await this.phRepository.find({
-        // where: { imageId: item.imagesId },
-        where: { postId: item.id },
-      });
-      console.log('photoMetadata: ', photoMetadata);
-      return this.postOutputMap(item, photoMetadata)
-    }));
+    const itemsOutput = await Promise.all(
+      items.map(async (item) => {
+        const photoMetadata = await this.phRepository.find({
+          // where: { imageId: item.imagesId },
+          where: { postId: item.id },
+        });
+        console.log('photoMetadata: ', photoMetadata);
+        return this.postOutputMap(item, photoMetadata);
+      }),
+    );
     const resultPosts = new PaginationBaseModel<PostViewModel>(
       generateQuery,
       itemsOutput,
@@ -234,16 +236,15 @@ export class PostsQueryRepositoryTO {
   // ---------------------_IMAGES_------------------------ //
 
   async getPhotoMetadata(postId: string) {
-    const post = await this.pRepository.findOne({
-      where: { id: postId },
-      relations: ['images', 'images.photoMetadata'],
+    const photoMetadata = await this.phRepository.find({
+      where: { postId },
     });
     // console.log('post: ', post);
     let mainArr: Omit<
       PhotoSizeEntity,
       'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
     >[] = [];
-    post?.images.photoMetadata.forEach((photo: PhotoSizeEntity) => {
+    photoMetadata.forEach((photo: PhotoSizeEntity) => {
       if (photo.imageType === ImageType.MAIN) {
         mainArr.push(this.photoSizeOutput(photo));
       }
@@ -253,7 +254,10 @@ export class PostsQueryRepositoryTO {
 
   photoSizeOutput(
     photo: PhotoSizeEntity,
-  ): Omit<PhotoSizeEntity, 'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'> {
+  ): Omit<
+    PhotoSizeEntity,
+    'id' | 'imageType' | 'imageId' | 'image' | 'post' | 'postId'
+  > {
     return {
       url: photo.url,
       height: photo.height,
